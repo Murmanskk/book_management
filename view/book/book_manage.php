@@ -1,11 +1,9 @@
-<!--
- * @Author: your name
- * @Date: 2020-06-15 14:12:31
- * @LastEditTime: 2020-06-16 17:06:08
- * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
- * @FilePath: \Javascriptd:\wwwroot\books_management\view\book\book_manage.html
--->
+<?php
+session_start();
+if ($_SESSION['access'] != 1) {
+    die(json_encode(array('code' => -1, 'msg' => '无权限')));
+}
+?>
 <!DOCTYPE html>
 <html>
 
@@ -23,9 +21,9 @@
                 <div class="layui-form-item">
                     <label class="layui-form-label">图书名</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="realName" placeholder="" class="layui-input">
+                        <input type="text" name="book_name" placeholder="" class="layui-input">
                     </div>
-                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="role-query">
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="book-query">
                         <i class="layui-icon layui-icon-search"></i>
                         查询
                     </button>
@@ -39,12 +37,12 @@
     </div>
     <div class="layui-card">
         <div class="layui-card-body">
-            <table id="role-table" lay-filter="role-table"></table>
+            <table id="book-table" lay-filter="book-table"></table>
         </div>
     </div>
 </body>
 
-<script type="text/html" id="role-toolbar">
+<script type="text/html" id="book-toolbar">
     <button class="pear-btn pear-btn-primary pear-btn-md" lay-event="add">
         <i class="layui-icon layui-icon-add-1"></i>
         新增
@@ -56,21 +54,18 @@
 </script>
 
 <script type="text/html" id="role-bar">
-    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i
-            class="layui-icon layui-icon-edit"></i></button>
-    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i
-            class="layui-icon layui-icon-delete"></i></button>
+    <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i class="layui-icon layui-icon-edit"></i></button>
+    <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i class="layui-icon layui-icon-delete"></i></button>
 </script>
 
-<script type="text/html" id="role-enable">
-    <input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable"
-        checked="{{ d.id == 10003 ? 'true' : 'false' }}">
+<script type="text/html" id="book-enable">
+    <input type="checkbox" name="book-enable" value="{{d.isbn}}" lay-skin="switch" lay-text="是|否" lay-filter="book-enable" {{d.status== 0 ? "checked" : ""}}>
 </script>
 
 
 <script src="../../component/layui/layui.js"></script>
 <script>
-    layui.use(['table', 'form', 'jquery'], function () {
+    layui.use(['table', 'form', 'jquery'], function() {
         let table = layui.table;
         let form = layui.form;
         let $ = layui.jquery;
@@ -100,36 +95,44 @@
                     title: '出版社',
                     field: 'publisher',
                     align: 'center',
-                    width: 180
+                    width: 150
                 },
                 {
                     title: '分类',
-                    field: 'cate',
+                    field: 'cate_name',
                     align: 'center',
-                    width: 80
+                    width: 120
                 },
                 {
                     title: '价格',
                     align: 'center',
                     field: 'price',
+                    width: 70
+                },
+
+                {
+                    title: '数量',
+                    align: 'center',
+                    field: 'quantity',
+                    width: 70
+                },
+                {
+                    title: '已借出',
+                    align: 'center',
+                    field: 'brrow_nums',
                     width: 80
                 },
                 {
                     title: '借阅次数',
                     align: 'center',
                     field: 'lend_times',
-                    width: 100
+                    width: 90
                 },
                 {
-                    title: '数量',
-                    align: 'center',
-                    field: 'quantity',
-                    width: 100
-                },
-                {
-                    title: '状态',
+                    title: '是否可借',
                     align: 'center',
                     field: 'status',
+                    templet: '#book-enable',
                     width: 100
                 },
                 {
@@ -141,31 +144,29 @@
         ]
 
         table.render({
-            elem: '#role-table',
+            elem: '#book-table',
             url: '../../php/bookAPI.php?s=getBookinfo',
             page: true,
             skin: 'line',
             limits: [10, 20, 30],
             limit: 10,
             cols: cols,
-            toolbar: '#role-toolbar',
+            toolbar: '#book-toolbar',
             defaultToolbar: [{
                 layEvent: 'refresh',
                 icon: 'layui-icon-refresh',
             }, 'filter', 'print', 'exports']
         });
 
-        table.on('tool(role-table)', function (obj) {
+        table.on('tool(book-table)', function(obj) {
             if (obj.event === 'remove') {
                 window.remove(obj);
             } else if (obj.event === 'edit') {
-                window.edit(obj);
-            } else if (obj.event === 'power') {
-                window.power(obj);
+                edit(obj);
             }
         });
 
-        table.on('toolbar(role-table)', function (obj) {
+        table.on('toolbar(book-table)', function(obj) {
             if (obj.event === 'add') {
                 window.add();
             } else if (obj.event === 'refresh') {
@@ -175,18 +176,20 @@
             }
         });
 
-        form.on('submit(role-query)', function (data) {
-            table.reload('role-table', {
-                where: data.field
+        form.on('submit(book-query)', function(data) {
+            console.log(data.field);
+
+            table.reload('book-table', {
+                where: data.field,
+                page: {
+                    curr: 1
+                } //重新从第 1 页开始
             })
             return false;
         });
 
-        form.on('switch(role-enable)', function (obj) {
-            layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
-        });
-
-        window.add = function () {
+        //添加图书
+        window.add = function() {
             var index = layer.open({
                 type: 2,
                 title: '新增',
@@ -195,53 +198,86 @@
                 content: 'add.html'
             });
         }
+        //修改图书
+        function edit(edit) {
+            var index = layui.layer.open({
+                type: 2,
+                title: '修改',
+                shade: 0.1,
+                area: ['300px', '450px'],
+                content: 'edit.html',
+                success: function(layero, index) {
+                    var body = layer.getChildFrame('body', index);
+                    var iframeWin = window[layero.find('iframe')[0]['name']];
+                    if (edit) {
+                        data = edit.data;
+                        body.find(".isbn").val(data.isbn);
+                        body.find(".book_name").val(data.book_name);
+                        body.find(".book_author").val(data.book_author);
+                        body.find(".publisher").val(data.publisher);
+                        body.find(".price").val(data.price);
+                        body.find(".quantity").val(data.quantity);
+                        form.render();
+                    }
+                    setTimeout(function() {
+                        layui.layer.tips('点击此处返回图书列表',
+                            '.layui-layer-setwin .layui-layer-close', {
+                                tips: 3
+                            });
+                    }, 500)
+                }
 
-        window.edit = function (obj) {
-            var index = layer.open({
-                    type: 2,
-                    title: '修改',
-                    shade: 0.1,
-                    area: ['500px', '500px'],
-                    content: 'edit.html',
-                    success: function (layero, index) {
-                        var body = layui.layer.getChildFrame('body', index);
-                        if (edit) {
-                            body.find(".user_id").val(edit.user_id);
-                            body.find(".username").val(edit.username); //登录名
-                            body.find(".email").val(edit.email); //邮箱
-                            body.find(".tel").val(edit.tel);
-                            body.find(".status").val(edit.status); //用户状态
-                            form.render();
+            });
+        }
+        //修改状态
+        form.on('switch(book-enable)', function(obj) {
+            status = obj.elem.checked == false ? 0 : 1;
+            console.log('11');
+
+            $.getJSON('../../php/bookAPI.php?s=updateStatus&isbn=' + obj.value + '&status=' + status,
+                function(json) {
+                    console.log(json);
+                    if (json.code != 0) {
+                        layer.open({
+                            title: '提示',
+                            icon: 7,
+                            content: json.msg
+                        });
+                        obj.elem.checked = !obj.elem.checked;
+                        form.render('checkbox');
+                    } else {
+                        if (obj.elem.checked == 1) {
+                            layer.msg('该书已设置成可借', {
+                                time: 1000
+                            });
+                        } else {
+                            layer.msg('该书已设置成不可借', {
+                                time: 1000
+                            });
                         }
-                        setTimeout(function () {
-                            layui.layer.tips('点击此处返回商品列表',
-                                '.layui-layer-setwin .layui-layer-close', {
-                                    tips: 3
-                                });
-                        }, 500)
                     }
 
-                });
-        }
-
-        window.remove = function (obj) {
+                })
+        })
+        //删除图书
+        window.remove = function(obj) {
             layer.confirm('确定要删除该图书', {
                 icon: 3,
                 title: '提示'
-            }, function (index) {
+            }, function(index) {
                 layer.close(index);
                 let loading = layer.load();
                 $.ajax({
-                    url: MODULE_PATH + "remove/" + obj.data['roleId'],
+                    url: '',
                     dataType: 'json',
                     type: 'delete',
-                    success: function (result) {
+                    success: function(result) {
                         layer.close(loading);
                         if (result.success) {
                             layer.msg(result.msg, {
                                 icon: 1,
                                 time: 1000
-                            }, function () {
+                            }, function() {
                                 obj.del();
                             });
                         } else {
@@ -255,7 +291,7 @@
             });
         }
 
-        window.batchRemove = function (obj) {
+        window.batchRemove = function(obj) {
             let data = table.checkStatus(obj.config.id).data;
             if (data.length === 0) {
                 layer.msg("未选中数据", {
@@ -272,20 +308,20 @@
             layer.confirm('确定要删除这些书籍', {
                 icon: 3,
                 title: '提示'
-            }, function (index) {
+            }, function(index) {
                 layer.close(index);
                 let loading = layer.load();
                 $.ajax({
-                    url: MODULE_PATH + "batchRemove/" + ids,
+                    url: '',
                     dataType: 'json',
                     type: 'delete',
-                    success: function (result) {
+                    success: function(result) {
                         layer.close(loading);
                         if (result.success) {
                             layer.msg(result.msg, {
                                 icon: 1,
                                 time: 1000
-                            }, function () {
+                            }, function() {
                                 table.reload('user-table');
                             });
                         } else {
@@ -299,8 +335,8 @@
             });
         }
 
-        window.refresh = function () {
-            table.reload('role-table');
+        window.refresh = function() {
+            table.reload('book-table');
         }
     })
 </script>

@@ -1,16 +1,23 @@
 <?php
 include_once 'conn.php';
 if (empty($_SESSION['access'])) {
-    die(json_encode(array('code' => -1, 'msg' => '请重新登录')));
+    die(json_encode(array('code' => -1, 'msg' => '无权限')));
 }
 $op = $_GET['s'];
 $responseData = array("code" => 0, "msg" => "", "count" => 0, "data" => "");
 switch ($op) {
-    case 'getBookinfo':
-        $sqlCount = "SELECT * FROM book";
+    case 'getBookinfo':     //查询图书
+        $book_name = $_GET['book_name'];
+        if ($book_name) {
+            $sqlCount = "SELECT * FROM book where book_name = '{$book_name}'";
+        } else {
+            $sqlCount = "SELECT * FROM book";
+        }
+
         $resCount = $mySQLi->query($sqlCount);
         //$resCount = $resCount->fetch_all();
         $responseData["count"] = $resCount->num_rows;
+
         if ($_GET['limit']) {
             $limit = $_GET['limit'];
         } else {
@@ -21,10 +28,18 @@ switch ($op) {
         } else {
             $page = 0;
         }
-        if ($_SESSION['access'] == 1) {
-            $sql = "SELECT * FROM book LIMIT {$page},{$limit}";
+        if ($_SESSION['access'] == 1) { //如果是管理员
+            if ($book_name) {
+                $sql = "SELECT * FROM book left join cate on book.cate = cate.cate_id where book_name = '{$book_name}' LIMIT {$page},{$limit}";
+            } else {
+                $sql = "SELECT * FROM book left join cate on book.cate = cate.cate_id LIMIT {$page},{$limit}";
+            }
         } else {
-            $sql = "SELECT isbn,book_name,book_author,publisher,cate,price,quantity FROM book LIMIT {$page},{$limit}";
+            if ($book_name) {
+                $sql = "SELECT isbn,book_name,book_author,publisher,cate,price,quantity,brrow_nums,cate_name FROM book left join cate on book.cate = cate.cate_id where book_name = '{$book_name}' LIMIT {$page},{$limit}";
+            } else {
+                $sql = "SELECT isbn,book_name,book_author,publisher,cate,price,quantity,brrow_nums,cate_name FROM book left join cate on book.cate = cate.cate_id LIMIT {$page},{$limit}";
+            }
         }
         $res = $mySQLi->query($sql);
         $res_arr = $res->fetch_all(MYSQLI_ASSOC);
@@ -39,7 +54,10 @@ switch ($op) {
         $responseData["data"] = $res_arr;
         echo json_encode($responseData);
         break;
-    case 'addBook':
+    case 'addBook':     //添加图书
+        if ($_SESSION['access'] != 1) {
+            die(json_encode(array('code' => -1, 'msg' => '无权限')));
+        }
         $book_data = file_get_contents("php://input");
         $book_data = json_decode($book_data);
         //查询是否存在该图书，如果存在，则直接将数量加一
@@ -70,10 +88,67 @@ switch ($op) {
                 echo json_encode($responseData);
             }
         }
-
-
-
         break;
+    case 'updateBook':
+        if ($_SESSION['access'] != 1) {
+            die(json_encode(array('code' => -1, 'msg' => '无权限')));
+        }
+        $book_data = file_get_contents("php://input");
+        $book_data = json_decode($book_data);
+        $sql = "UPDATE book SET book_name = '{$book_data->book_name}',
+                                book_author = '{$book_data->book_author}',
+                                publisher = '{$book_data->publisher}',
+                                cate = '{$book_data->cate}',
+                                price = '{$book_data->price}',
+                                quantity = '{$book_data->quantity}'
+                            WHERE isbn = '{$book_data->isbn}'";
+        if ($mySQLi->query($sql)) {
+            $responseData['msg'] = '修改图书信息成功';
+            echo json_encode($responseData);
+        } else {
+            $responseData['code'] = 1;
+            $responseData['msg'] = '修改图书信息失败';
+            echo json_encode($responseData);
+        }
+        break;
+    case 'updateStatus':
+        if ($_SESSION['access'] != 1) {
+            die(json_encode(array('code' => -1, 'msg' => '无权限')));
+        }
+        $isbn = $_GET['isbn'];
+        $status = $_GET['status'];
+        function switchStatus($mySQLi, $status, $isbn)
+        {
+            $sql = 'UPDATE book SET status = ? WHERE isbn = ?';
+            $stmt = $mySQLi->init();
+            if ($status) {
+                $statusCode = 0;
+                $stmt = $mySQLi->prepare($sql);
+                $stmt->bind_param('is', $statusCode, $isbn);
+                if ($stmt->execute()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                $statusCode = 1;
+                $stmt = $mySQLi->prepare($sql);
+                $stmt->bind_param('is', $statusCode, $isbn);
+                if ($stmt->execute()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+        if (switchStatus($mySQLi, $status, $isbn)) {
+            $responseData['msg'] = '修改状态成功';
+            echo json_encode($responseData);
+        } else {
+            $responseData['code'] = 1;
+            $responseData['msg'] = '修改状态失败';
+            echo json_encode($responseData);
+        }
     default:
         # code...
         break;

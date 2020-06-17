@@ -107,7 +107,7 @@
                 //表单提交
                 form.on('submit(user-save)', function (data) {
 
-                    console.log(JSON.stringify(data.field));
+                    //console.log(JSON.stringify(data.field));
 
                     $.ajax({
                         url: '../../php/bookAPI.php?s=addBook',
@@ -125,7 +125,7 @@
                                         .getFrameIndex(window
                                             .name)); //关闭当前页
                                     parent.layui.table.reload(
-                                    "role-table");
+                                    "book-table");
                                 });
                             } else {
                                 layer.msg('添加失败', {

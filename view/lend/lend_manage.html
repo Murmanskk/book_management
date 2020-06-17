@@ -1,8 +1,141 @@
-<!--
- * @Author: your name
- * @Date: 2020-06-15 14:14:30
- * @LastEditTime: 2020-06-15 14:14:30
- * @LastEditors: Please set LastEditors
- * @Description: In User Settings Edit
- * @FilePath: \Javascriptd:\wwwroot\books_management\view\lend\lend_manage.html
---> 
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <link href="../../component/layui/css/layui.css" rel="stylesheet" />
+    <link href="../../admin/css/pearCommon.css" rel="stylesheet" />
+</head>
+
+<body class="pear-container">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <form class="layui-form" action="">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户ID</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="book_name" placeholder="" class="layui-input">
+                    </div>
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="book-query">
+                        <i class="layui-icon layui-icon-search"></i>
+                        查询
+                    </button>
+                    <button type="reset" class="pear-btn pear-btn-md">
+                        <i class="layui-icon layui-icon-refresh"></i>
+                        重置
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <table id="lend-table" lay-filter="lend-table"></table>
+        </div>
+    </div>
+</body>
+
+
+<script src="../../component/layui/layui.js"></script>
+<script>
+    layui.use(['table', 'form', 'jquery'], function () {
+        let table = layui.table;
+        let form = layui.form;
+        let $ = layui.jquery;
+        let cols = [
+            [
+                {
+                    title: '借阅ID号',
+                    field: 'id',
+                    align: 'center',
+                    width: 125
+                },
+                {
+                    title: '用户ID',
+                    field: 'user_id',
+                    align: 'center',
+                    width: 180
+                },
+                {
+                title: '图书号',
+                field: 'isbn',
+                align: 'center',
+                width: 180
+                },
+                {
+                title: '图书名',
+                field: 'book_name',
+                align: 'center',
+                width: 180
+                },
+                {
+                    title: '作者',
+                    field: 'book_author',
+                    align: 'center',
+                    width: 100
+                },
+                {
+                    title: '价格',
+                    align: 'center',
+                    field: 'price',
+                    width: 80
+                },
+                {
+                    title: '可借数量',
+                    align: 'center',
+                    templet: function (d) {
+                        return d.quantity - d.brrow_nums;
+                    },
+                    width: 100
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    templet: function (d) {
+                        if (d.quantity - d.brrow_nums > 0) {
+                            return '<div><button type="button" class="lend-btn layui-btn layui-btn-sm" book_name="' +
+                                d.book_name + '" isbn="' +
+                                d.isbn + '">申请借阅</button></div>';
+                        } else {
+                            return '<div><button type="button" class="layui-btn layui-btn-sm layui-btn-disabled" disabled="disabled">申请借阅</button></div>';
+                        }
+                    },
+                }
+            ]
+        ]
+        table.render({
+            elem: '#book-table',
+            url: '../../php/bookAPI.php?s=getBookinfo',
+            page: true,
+            skin: 'line',
+            limits: [10, 20, 30],
+            limit: 10,
+            cols: cols,
+            defaultToolbar: [{
+                layEvent: 'refresh',
+                icon: 'layui-icon-refresh',
+            }, 'filter', 'print', 'exports'],
+            done: function () { //当数据渲染完，绑定按钮点击事件
+                //申请借阅
+            }
+        });
+
+        form.on('submit(book-query)', function (data) {
+            console.log(data.field);
+
+            table.reload('book-table', {
+                where: data.field,
+                page: {
+                    curr: 1
+                } //重新从第 1 页开始
+            })
+            return false;
+        });
+
+
+    });
+</script>
+</body>
+
+</html>

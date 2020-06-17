@@ -184,11 +184,9 @@ session_start();
 			<div class="layui-col-xs12 layui-col-md8">
 				<div class="layui-carousel" id="test1">
 					<div carousel-item>
-						<div>条目1</div>
-						<div>条目2</div>
-						<div>条目3</div>
-						<div>条目4</div>
-						<div>条目5</div>
+						<div><img src="https://s1.ax1x.com/2020/05/27/tFjgYQ.jpg" alt="" style="width:100%"></div>
+						<div><img src="https://s2.ax1x.com/2019/09/22/upXHYT.jpg" alt="" style="width:100%"></div>
+						<div><img src="https://s2.ax1x.com/2019/09/22/upOKbt.jpg" alt="" style="width:100%"></div>
 					</div>
 				</div>
 			</div>
