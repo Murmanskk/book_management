@@ -8,12 +8,16 @@ $responseData = array("code" => 0, "msg" => "", "count" => 0, "data" => "");
 switch ($op) {
     case 'getBookinfo':     //查询图书
         $book_name = $_GET['book_name'];
-        if ($book_name) {
-            $sqlCount = "SELECT * FROM book where book_name = '{$book_name}'";
-        } else {
+        $cate_id = $_GET['cate'];
+        if ($book_name&&!$cate_id) {
+            $sqlCount = "SELECT * FROM book where book_name like '%{$book_name}%'";
+        } else if($book_name && $cate_id){
+            $sqlCount = "SELECT * FROM book where book_name like '%{$book_name}%' AND cate='{$cate_id}'";
+        } else if (!$book_name && $cate_id) {
+            $sqlCount = "SELECT * FROM book where cate='{$cate_id}'";
+        }else {
             $sqlCount = "SELECT * FROM book";
         }
-
         $resCount = $mySQLi->query($sqlCount);
         //$resCount = $resCount->fetch_all();
         $responseData["count"] = $resCount->num_rows;
@@ -29,14 +33,22 @@ switch ($op) {
             $page = 0;
         }
         if ($_SESSION['access'] == 1) { //如果是管理员
-            if ($book_name) {
-                $sql = "SELECT * FROM book left join cate on book.cate = cate.cate_id where book_name = '{$book_name}' LIMIT {$page},{$limit}";
+            if ($book_name&&!$cate_id) {
+                $sql = "SELECT * FROM book left join cate on book.cate = cate.cate_id where book_name like '%{$book_name}%' LIMIT {$page},{$limit}";
+            } else if(!$book_name && $cate_id){
+                $sql = "SELECT * FROM book left join cate on book.cate = cate.cate_id where cate='{$cate_id}' LIMIT {$page},{$limit}";
+            } else if ($book_name && $cate_id) {
+                $sql = "SELECT * FROM book left join cate on book.cate = cate.cate_id where book_name like '%{$book_name}%' AND cate='{$cate_id}' LIMIT {$page},{$limit}";
             } else {
                 $sql = "SELECT * FROM book left join cate on book.cate = cate.cate_id LIMIT {$page},{$limit}";
             }
         } else {
-            if ($book_name) {
-                $sql = "SELECT isbn,book_name,book_author,publisher,cate,price,quantity,brrow_nums,cate_name FROM book left join cate on book.cate = cate.cate_id where book_name = '{$book_name}' LIMIT {$page},{$limit}";
+            if ($book_name && !$cate_id) {
+                $sql = "SELECT isbn,book_name,book_author,publisher,cate,price,quantity,brrow_nums,cate_name FROM book left join cate on book.cate = cate.cate_id where book_name like '%{$book_name}%' LIMIT {$page},{$limit}";
+            } else if (!$book_name && $cate_id) {
+                $sql = "SELECT isbn,book_name,book_author,publisher,cate,price,quantity,brrow_nums,cate_name FROM book left join cate on book.cate = cate.cate_id where cate='{$cate_id}' LIMIT {$page},{$limit}";
+            } else if ($book_name && $cate_id) {
+                $sql = "SELECT isbn,book_name,book_author,publisher,cate,price,quantity,brrow_nums,cate_name FROM book left join cate on book.cate = cate.cate_id where book_name like '%{$book_name}%' AND cate='{$cate_id}' LIMIT {$page},{$limit}";
             } else {
                 $sql = "SELECT isbn,book_name,book_author,publisher,cate,price,quantity,brrow_nums,cate_name FROM book left join cate on book.cate = cate.cate_id LIMIT {$page},{$limit}";
             }
@@ -119,7 +131,7 @@ switch ($op) {
         $status = $_GET['status'];
         function switchStatus($mySQLi, $status, $isbn)
         {
-            $sql = 'UPDATE book SET status = ? WHERE isbn = ?';
+            $sql = 'UPDATE book SET book_status = ? WHERE isbn = ?';
             $stmt = $mySQLi->init();
             if ($status) {
                 $statusCode = 0;

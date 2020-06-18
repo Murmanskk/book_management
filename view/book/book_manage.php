@@ -18,20 +18,31 @@ if ($_SESSION['access'] != 1) {
     <div class="layui-card">
         <div class="layui-card-body">
             <form class="layui-form" action="">
-                <div class="layui-form-item">
+                <div class="layui-form-item layui-input-inline">
                     <label class="layui-form-label">图书名</label>
                     <div class="layui-input-inline">
                         <input type="text" name="book_name" placeholder="" class="layui-input">
                     </div>
-                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="book-query">
-                        <i class="layui-icon layui-icon-search"></i>
-                        查询
-                    </button>
-                    <button type="reset" class="pear-btn pear-btn-md">
-                        <i class="layui-icon layui-icon-refresh"></i>
-                        重置
-                    </button>
                 </div>
+                <div class="layui-form-item layui-input-inline">
+                    <label class="layui-form-label">分类</label>
+                    <div class="layui-input-inline">
+                        <select name="cate" id="cateList">
+                            <!-- 这里动态获取下拉框信息 -->
+                            <option value="0">分类1</option>
+                            <option value="1">分类2</option>
+                            <option value="2">分类3</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="book-query">
+                    <i class="layui-icon layui-icon-search"></i>
+                    查询
+                </button>
+                <button type="reset" class="pear-btn pear-btn-md">
+                    <i class="layui-icon layui-icon-refresh"></i>
+                    重置
+                </button>
             </form>
         </div>
     </div>
@@ -59,7 +70,7 @@ if ($_SESSION['access'] != 1) {
 </script>
 
 <script type="text/html" id="book-enable">
-    <input type="checkbox" name="book-enable" value="{{d.isbn}}" lay-skin="switch" lay-text="是|否" lay-filter="book-enable" {{d.status== 0 ? "checked" : ""}}>
+    <input type="checkbox" name="book-enable" value="{{d.isbn}}" lay-skin="switch" lay-text="是|否" lay-filter="book-enable" {{d.book_status== 0 ? "checked" : ""}}>
 </script>
 
 
@@ -69,6 +80,19 @@ if ($_SESSION['access'] != 1) {
         let table = layui.table;
         let form = layui.form;
         let $ = layui.jquery;
+        $.post('../../php/bookAPI.php?s=getCate', function(res) {
+            $('#cateList').empty();
+            $('#cateList').append("<option value=''>请选择</option>");
+            res = JSON.parse(res);
+            for (var k in res.data) {
+                $('#cateList').append("<option value='" + res.data[k].cate_id + "'>" +
+                    res.data[k]
+                    .cate_name +
+                    "</option>");
+            }
+            form.render();
+        })
+        //定义表格内容
         let cols = [
             [{
                     type: 'checkbox'
@@ -131,7 +155,7 @@ if ($_SESSION['access'] != 1) {
                 {
                     title: '是否可借',
                     align: 'center',
-                    field: 'status',
+                    field: 'book_status',
                     templet: '#book-enable',
                     width: 100
                 },
@@ -142,7 +166,7 @@ if ($_SESSION['access'] != 1) {
                 }
             ]
         ]
-
+        
         table.render({
             elem: '#book-table',
             url: '../../php/bookAPI.php?s=getBookinfo',

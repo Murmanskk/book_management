@@ -17,7 +17,6 @@
                     <div class="layui-input-inline">
                         <input type="text" name="book_name" placeholder="" class="layui-input">
                     </div>
-
                 </div>
                 <div class="layui-form-item layui-input-inline">
                     <label class="layui-form-label">分类</label>
@@ -63,7 +62,7 @@
 
         $.post('../../php/bookAPI.php?s=getCate', function (res) {
             $('#cateList').empty();
-            $('#cateList').append("<option value=''>请选择</option>");
+            $('#cateList').append("<option value=''>全部</option>");
             res = JSON.parse(res);
             for (var k in res.data) {
                 $('#cateList').append("<option value='" + res.data[k].cate_id + "'>" +
@@ -163,29 +162,23 @@
                             yes: function () {
                                 $.ajax({
                                     method: 'POST',
-                                    url: '../../php/lendAPI.php?s=applyBook&isbn=' +
-                                        isbn,
+                                    url: '../../php/lendAPI.php?s=applyBook&isbn=' + isbn,
                                     success: function (res) {
-                                        res = JSON.parse(
-                                            res);
+                                        res = JSON.parse(res);
                                         if (res.code == 0) {
-                                            layer.msg(res
-                                                .msg, {
-                                                    shift:
-                                                        -
-                                                        1,
+                                            layer.msg(res.msg, {
+                                                    shift:- 1,
                                                     time: 1000,
                                                     icon: 1
                                                 });
+                                                refresh();
                                         } else {
-                                            layer.msg(res
-                                                .msg, {
-                                                    shift:
-                                                        -
-                                                        1,
+                                            layer.msg(res.msg, {
+                                                    shift:-1,
                                                     time: 1000,
                                                     icon: 5
                                                 });
+                                                refresh();
                                         }
                                     }
                                 })
@@ -197,8 +190,6 @@
         });
 
         form.on('submit(book-query)', function (data) {
-            console.log(data.field);
-
             table.reload('book-table', {
                 where: data.field,
                 page: {
@@ -208,7 +199,9 @@
             return false;
         });
 
-
+        window.refresh = function() {
+            table.reload('book-table');
+        }
     });
 </script>
 </body>

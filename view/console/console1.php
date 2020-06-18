@@ -152,16 +152,17 @@ session_start();
 		}
 
 		.person h1 {
-			margin: 30px;
+			text-align: center;
 			font-weight: bold;
+			margin-top: 30px;
+			margin-bottom: 30px;
 		}
 
 		.person h2 {
-			margin: 30px;
-		}
-
-		.person button {
-			margin: 0 auto;
+			float: left;
+			width: 100%;
+			margin-top: 30px;
+			margin-left: 20px;
 		}
 	</style>
 </head>
@@ -171,12 +172,16 @@ session_start();
 		<div class="layui-row layui-col-space10">
 			<div class="layui-col-md4">
 				<div class="layui-card">
-					<div class="layui-card-body person" style="height: 260px; text-align:center">
+					<div class="layui-card-body person">
 
 						<h1>欢迎你！ <span style="color:#5FB878;"><?php echo $_SESSION['username']; ?></span></h1>
+						<hr>
 						<h2>手机号：</h2>
-						<h2>邮箱：</h2>
-						<button type="" class="pear-btn pear-btn-primary">修改信息</button>
+						<h2>邮&nbsp;&nbsp;&nbsp;箱：</h2>
+						<div style="width: 100%; text-align:center;">
+							<button type="" class="pear-btn pear-btn-primary modify-btn" style="margin:15px 0 15px 0">修改信息</button>
+						</div>
+
 					</div>
 
 				</div>
@@ -190,10 +195,20 @@ session_start();
 					</div>
 				</div>
 			</div>
-			<div class="layui-col-xs6 layui-col-md4">
-				<div class="layui-card top-panel">
+			<div class="layui-col-xs12 layui-col-md4">
+				<div class="layui-card">
 					<div class="layui-card-header">系统公告</div>
 					<div class="layui-card-body">
+						<ul class="list">
+							<li class="list-item"><span class="title">优化代码格式</span><span class="footer">2020-06-04 11:28</span></li>
+							<li class="list-item"><span class="title">新增消息组件</span><span class="footer">2020-06-01 04:23</span></li>
+							<li class="list-item"><span class="title">移动端兼容</span><span class="footer">2020-05-22 21:38</span></li>
+							<li class="list-item"><span class="title">系统布局优化</span><span class="footer">2020-05-15 14:26</span></li>
+							<li class="list-item"><span class="title">兼容多系统菜单模式</span><span class="footer">2020-05-13 16:32</span></li>
+							<li class="list-item"><span class="title">兼容多标签页切换</span><span class="footer">2019-12-9 14:58</span></li>
+							<li class="list-item"><span class="title">扩展下拉组件</span><span class="footer">2019-12-7 9:06</span></li>
+							<li class="list-item" style="text-align: center;"><span><a>查看更多公告</a></span></li>
+						</ul>
 					</div>
 				</div>
 			</div>
@@ -241,8 +256,9 @@ session_start();
 				carousel.render({
 					elem: '#test1',
 					width: '100%',
-					arrow: 'hover' //始终显示箭头
+					arrow: 'hover', //始终显示箭头
 					//,anim: 'updown' //切换动画方式
+					height: '300px'
 				});
 
 			});
