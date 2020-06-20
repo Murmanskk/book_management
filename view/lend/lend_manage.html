@@ -24,10 +24,11 @@
                         <select name="lend_status" id="lend_status">
                             <!-- 这里动态获取下拉框信息 -->
                             <option value="">请选择</option>
-                            <option value="1">未处理</option>
+                            <option value="1">借阅申请</option>
                             <option value="2">已批准</option>
                             <option value="3">未批准</option>
-                            <option value="4">超期</option>
+                            <option value="4">归还申请</option>
+                            <option value="5">已归还</option>
                         </select>
                     </div>
                 </div>
@@ -107,8 +108,13 @@
                             return '<div><button type="button" class="layui-btn-radius layui-btn layui-btn-sm layui-btn-disabled layui-btn-radius" disabled="disabled">已批准</button></div>';
                         } else if (d.lend_status == 3) {
                             return '<div><button type="button" class="layui-btn layui-btn-sm layui-btn-disabled layui-btn-radius" disabled="disabled">未批准</button></div>';
-                        } else {
-                            return '<div><button type="button" class="layui-btn layui-btn-sm layui-btn-disabled" disabled="disabled">超期未还</button></div>';
+                        } else if (d.lend_status == 4) {
+                            return '<div><button type="button" class="return-btn layui-btn layui-btn-sm layui-btn-normal" lend_id="' +
+                                d.lend_id + '">确认归还</button></div>';
+                        } else if(d.lend_status == 5){
+                            return '<div><button type="button" class="layui-btn layui-btn-sm layui-btn-disabled" disabled="disabled">已归还</button></div>';
+                        } else{
+                            return '<div><button type="button" class="layui-btn layui-btn-sm layui-btn-disabled" disabled="disabled">已取消</button></div>';
                         }
                     },
                 }
@@ -183,6 +189,49 @@
                                 $.ajax({
                                     method: 'POST',
                                     url: '../../php/lendAPI.php?s=rejectApply&lend_id=' +
+                                        lend_id,
+                                    success: function (res) {
+                                        res = JSON.parse(
+                                            res);
+                                        if (res.code == 0) {
+                                            layer.msg(res
+                                                .msg, {
+                                                    shift:
+                                                        -
+                                                        1,
+                                                    time: 1000,
+                                                    icon: 1
+                                                });
+                                            refresh();
+                                        } else {
+                                            layer.msg(res
+                                                .msg, {
+                                                    shift:
+                                                        -
+                                                        1,
+                                                    time: 1000,
+                                                    icon: 5
+                                                });
+                                            refresh();
+                                        }
+                                    }
+                                })
+                            }
+                        })
+                    })
+                })
+                $('.return-btn').each(function () {
+                    $(this).on('click', function () {
+                        //console.log($(this).attr('book_name'));
+                        let lend_id = $(this).attr('lend_id');
+                        layer.open({
+                            title: '提示消息',
+                            content: '确认收到该书？',
+                            btn: ['确定', '取消'],
+                            yes: function () {
+                                $.ajax({
+                                    method: 'POST',
+                                    url: '../../php/lendAPI.php?s=returnBook&lend_id=' +
                                         lend_id,
                                     success: function (res) {
                                         res = JSON.parse(
