@@ -2,7 +2,7 @@
 /*
  * @Author: your name
  * @Date: 2020-06-17 14:20:03
- * @LastEditTime: 2020-06-20 23:36:09
+ * @LastEditTime: 2020-06-21 17:07:40
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \Javascriptd:\wwwroot\books_management\php\lendAPI.php
@@ -29,19 +29,17 @@ switch ($op) {
             $responseData['msg'] = '当前书籍已全部借出';
             echo json_encode($responseData);
         } else {
+            $mySQLi->autocommit(false);
+            $mySQLi->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
             $sql = "INSERT INTO lend_info(user_id, isbn, lend_status) VALUES ('{$user_id}','{$isbn}', '1')";
-            if ($mySQLi->query($sql)) {
-                $sql_update = "UPDATE book SET brrow_nums=brrow_nums+1 WHERE isbn = '{$isbn}'"; //更新已借出数量
-                if ($mySQLi->query($sql_update)) {
-                    $responseData['msg'] = '申请成功，请等待批准';
-                    echo json_encode($responseData);
-                } else {
-                    $responseData['code'] = 1;
-                    $responseData['msg'] = '申请失败';
-                    echo json_encode($responseData);
-                }
-            } else {
-                $responseData['code'] = 2;
+            $sql_update = "UPDATE book SET brrow_nums=brrow_nums+1 WHERE isbn = '{$isbn}'"; //更新已借出数量
+            if($mySQLi->query($sql)&&$mySQLi->query($sql_update)){
+                $mySQLi->commit();
+                $responseData['msg'] = '申请成功，请等待批准';
+                echo json_encode($responseData);
+            }else{
+                $mySQLi->rollback();
+                $responseData['code'] = '-1';
                 $responseData['msg'] = '申请失败';
                 echo json_encode($responseData);
             }
@@ -204,11 +202,16 @@ switch ($op) {
             die(json_encode(array('code' => -1, 'msg' => '无权限')));
         }
         $lend_id = $_GET['lend_id'];
+        $mySQLi->autocommit(false);
+        $mySQLi->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
         $sql = "UPDATE lend_info SET lend_status = 3,admin_id = '{$_SESSION['uid']}' WHERE lend_id = '{$lend_id}'";
-        if ($mySQLi->query($sql)) {
+        $sql2 = "UPDATE book SET brrow_nums=brrow_nums-1 WHERE isbn IN (SELECT isbn FROM lend_info WHERE lend_id = '{$lend_id}')";
+        if ($mySQLi->query($sql)&&$mySQLi->query($sql2)) {
+            $mySQLi->commit();
             $responseData['msg'] = '已拒绝';
             echo json_encode($responseData);
         } else {
+            $mySQLi->rollback();
             $responseData['code'] = -1;
             $responseData['msg'] = '批准失败';
             echo json_encode($responseData);
@@ -237,12 +240,16 @@ switch ($op) {
             }
         } else if ($_SESSION['access'] == 1) {
             $lend_id = $_GET['lend_id'];
+            $mySQLi->autocommit(false);
+            $mySQLi->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
             $sql = "UPDATE lend_info SET lend_status = 5 WHERE lend_id = '{$lend_id}'";
-            $sql1 = "UPDATE book SET quantity = quantity+1 WHERE lend_id = '{$lend_id}'";
+            $sql1 = "UPDATE book SET brrow_nums = brrow_nums-1 WHERE isbn IN (SELECT isbn FROM lend_info WHERE lend_id = '{$lend_id}')";
             if ($mySQLi->query($sql)&& $mySQLi->query($sql1)) {
+                $mySQLi->commit();
                 $responseData['msg'] = '已确认';
                 echo json_encode($responseData);
             } else {
+                $mySQLi->rollback();
                 $responseData['code'] = -1;
                 $responseData['msg'] = '失败';
                 echo json_encode($responseData);
@@ -257,19 +264,30 @@ switch ($op) {
             $res_data = $res->fetch_assoc();
             if($res_data['lend_status'] == 1){
                 $sql = "UPDATE lend_info SET lend_status = 6 WHERE lend_id = '{$lend_id}'";
-                $sql1 = "UPDATE book SET quantity = quantity+1 WHERE lend_id = '{$lend_id}'";
+                $sql1 = "UPDATE book SET brrow_nums = brrow_nums-1 WHERE isbn IN (SELECT isbn FROM lend_info WHERE lend_id = '{$lend_id}')";
+                $mySQLi->autocommit(false);
+                $mySQLi->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
+                if ($mySQLi->query($sql) && $mySQLi->query($sql1)) {
+                    $mySQLi->commit();
+                    $responseData['msg'] = '已取消';
+                    echo json_encode($responseData);
+                }else{
+                    $mySQLi->rollback();
+                    $responseData['code'] = -1;
+                    $responseData['msg'] = '取消失败';
+                    echo json_encode($responseData);
+                }
             }else{
                 $sql = "UPDATE lend_info SET lend_status = 2 WHERE lend_id = '{$lend_id}'";
-            }
-            
-            if ($mySQLi->query($sql)&& $mySQLi->query($sql1)) {
-                $responseData['msg'] = '已取消';
-                echo json_encode($responseData);
-            } else {
-                $responseData['code'] = -1;
-                echo $mySQLi->error;
-                $responseData['msg'] = '取消失败';
-                echo json_encode($responseData);
+                if ($mySQLi->query($sql)) {
+                    $responseData['msg'] = '已取消';
+                    echo json_encode($responseData);
+                } else {
+                    $responseData['code'] = -1;
+                    echo $mySQLi->error;
+                    $responseData['msg'] = '取消失败';
+                    echo json_encode($responseData);
+                }
             }
         } else {
             $responseData['code'] = -1;
