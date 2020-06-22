@@ -2,7 +2,7 @@
 /*
  * @Author: your name
  * @Date: 2020-06-17 14:20:03
- * @LastEditTime: 2020-06-21 17:07:40
+ * @LastEditTime: 2020-06-21 19:19:07
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \Javascriptd:\wwwroot\books_management\php\lendAPI.php
@@ -20,13 +20,13 @@ switch ($op) {
         $isbn = $_GET['isbn'];
         $user_id = $_SESSION['uid'];
         //检查当前图书是否全部借出
-        $sql_jug = "SELECT isbn, quantity, brrow_nums, quantity-brrow_nums AS now_nums FROM book WHERE isbn = '{$isbn}'";
+        $sql_jug = "SELECT isbn, quantity, brrow_nums, quantity-brrow_nums AS now_nums FROM book WHERE isbn = '{$isbn}' AND book_status = 0";
         $now_nums = $mySQLi->query($sql_jug);
         $now_nums = $now_nums->fetch_all(MYSQLI_ASSOC);
 
         if ($now_nums[0]['now_nums'] <= 0) {
             $responseData['code'] = 1;
-            $responseData['msg'] = '当前书籍已全部借出';
+            $responseData['msg'] = '当前书籍不可借或已全部借出';
             echo json_encode($responseData);
         } else {
             $mySQLi->autocommit(false);

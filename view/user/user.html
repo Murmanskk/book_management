@@ -13,15 +13,11 @@
         <div class="layui-card-body">
             <form class="layui-form" action="">
                 <div class="layui-form-item">
-                    <label class="layui-form-label">角色名称</label>
+                    <label class="layui-form-label">手机号</label>
                     <div class="layui-input-inline">
-                        <input type="text" name="realName" placeholder="" class="layui-input">
+                        <input type="text" name="tel" placeholder="" class="layui-input">
                     </div>
-                    <label class="layui-form-label">角色标识</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="username" placeholder="" class="layui-input">
-                    </div>
-                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="role-query">
+                    <button class="pear-btn pear-btn-md pear-btn-primary" lay-submit lay-filter="user-query">
                         <i class="layui-icon layui-icon-search"></i>
                         查询
                     </button>
@@ -35,7 +31,7 @@
     </div>
     <div class="layui-card">
         <div class="layui-card-body">
-            <table id="role-table" lay-filter="role-table"></table>
+            <table id="user-table" lay-filter="user-table"></table>
         </div>
     </div>
 </body>
@@ -51,18 +47,20 @@
     </button>
 </script>
 
-<script type="text/html" id="role-bar">
+<script type="text/html" id="user-bar">
     <button class="pear-btn pear-btn-primary pear-btn-sm" lay-event="edit"><i
             class="layui-icon layui-icon-edit"></i></button>
-    <button class="pear-btn pear-btn-warming pear-btn-sm" lay-event="power"><i
-            class="layui-icon layui-icon-vercode"></i></button>
+
     <button class="pear-btn pear-btn-danger pear-btn-sm" lay-event="remove"><i
             class="layui-icon layui-icon-delete"></i></button>
+
+    <button class="pear-btn pear-btn-sm" lay-event="reset" title="重置密码"><i
+            class="layui-icon layui-icon-refresh-1"></i></button>
 </script>
 
-<script type="text/html" id="role-enable">
-    <input type="checkbox" name="enable" value="{{d.id}}" lay-skin="switch" lay-text="启用|禁用" lay-filter="user-enable"
-        checked="{{ d.id == 10003 ? 'true' : 'false' }}">
+<script type="text/html" id="user-enable">
+    <input type="checkbox" name="enable" value="{{d.user_id}}" lay-skin="switch" lay-text="正常|封禁"
+        lay-filter="user-enable" {{d.user_status== 1 ? "checked" : ""}}>
 </script>
 
 
@@ -72,38 +70,55 @@
         let table = layui.table;
         let form = layui.form;
         let $ = layui.jquery;
-
-        let MODULE_PATH = "operate/";
-
         let cols = [
             [{
                     type: 'checkbox'
                 },
                 {
-                    title: '角色名',
-                    field: 'roleName',
+                    title: '用户ID',
+                    field: 'user_id',
                     align: 'center',
                     width: 100
                 },
                 {
-                    title: 'Key值',
-                    field: 'roleCode',
+                    title: '用户名',
+                    field: 'user_name',
                     align: 'center'
                 },
                 {
-                    title: '描述',
-                    field: 'details',
+                    title: '手机号',
+                    field: 'tel',
                     align: 'center'
                 },
                 {
-                    title: '是否可用',
-                    field: 'enable',
+                    title: '邮箱',
+                    field: 'email',
                     align: 'center',
-                    templet: '#role-enable'
+                },
+                {
+                    title: '密码',
+                    field: 'password',
+                    align: 'center',
+                },
+                {
+                    title: '封禁',
+                    field: 'user_status',
+                    align: 'center',
+                    templet: '#user-enable'
+                },
+                {
+                    title: '借阅次数',
+                    field: 'borrow_times',
+                    align: 'center',
+                },
+                {
+                    title: '超期次数',
+                    field: 'overdue_times',
+                    align: 'center',
                 },
                 {
                     title: '操作',
-                    toolbar: '#role-bar',
+                    toolbar: '#user-bar',
                     align: 'center',
                     width: 195
                 }
@@ -111,8 +126,8 @@
         ]
 
         table.render({
-            elem: '#role-table',
-            url: '../../admin/data/role.json',
+            elem: '#user-table',
+            url: '../../php/userAPI.php?s=getUserInfo',
             page: true,
             cols: cols,
             skin: 'line',
@@ -120,20 +135,18 @@
             defaultToolbar: [{
                 layEvent: 'refresh',
                 icon: 'layui-icon-refresh',
-            }, 'filter', 'print', 'exports']
+            }, 'print', 'exports']
         });
 
-        table.on('tool(role-table)', function (obj) {
+        table.on('tool(user-table)', function (obj) {
             if (obj.event === 'remove') {
                 window.remove(obj);
             } else if (obj.event === 'edit') {
                 window.edit(obj);
-            } else if (obj.event === 'power') {
-                window.power(obj);
             }
         });
 
-        table.on('toolbar(role-table)', function (obj) {
+        table.on('toolbar(user-table)', function (obj) {
             if (obj.event === 'add') {
                 window.add();
             } else if (obj.event === 'refresh') {
@@ -143,8 +156,8 @@
             }
         });
 
-        form.on('submit(role-query)', function (data) {
-            table.reload('role-table', {
+        form.on('submit(user-query)', function (data) {
+            table.reload('user-table', {
                 where: data.field
             })
             return false;
@@ -160,39 +173,47 @@
                 title: '新增',
                 shade: 0.1,
                 area: ['500px', '400px'],
-                content: MODULE_PATH + 'add.html'
+                content: 'add.html',
             });
         }
 
-        window.power = function (obj) {
-            layer.open({
-                type: 2,
-                title: '授权',
-                shade: 0.1,
-                area: ['320px', '400px'],
-                content: MODULE_PATH + 'edit.html'
-            });
-        }
-
-        window.edit = function (obj) {
-            layer.open({
+        window.edit = function (edit) {
+            var index = layui.layer.open({
                 type: 2,
                 title: '修改',
                 shade: 0.1,
-                area: ['500px', '400px'],
-                content: MODULE_PATH + 'edit.html'
+                area: ['300px', '340px'],
+                content: 'edit.html',
+                success: function (layero, index) {
+                    var body = layer.getChildFrame('body', index);
+                    var iframeWin = window[layero.find('iframe')[0]['name']];
+                    if (edit) {
+                        data = edit.data;
+                        body.find(".user_id").val(data.user_id);
+                        body.find(".user_name").val(data.user_name);
+                        body.find(".tel").val(data.tel);
+                        body.find(".email").val(data.email);
+                        form.render();
+                    }
+                    setTimeout(function () {
+                        layui.layer.tips('点击此处返回图书列表',
+                            '.layui-layer-setwin .layui-layer-close', {
+                                tips: 3
+                            });
+                    }, 500)
+                }
             });
         }
 
         window.remove = function (obj) {
-            layer.confirm('确定要删除该角色', {
+            layer.confirm('确定要删除该用户', {
                 icon: 3,
                 title: '提示'
             }, function (index) {
                 layer.close(index);
                 let loading = layer.load();
                 $.ajax({
-                    url: MODULE_PATH + "remove/" + obj.data['roleId'],
+                    url: '',
                     dataType: 'json',
                     type: 'delete',
                     success: function (result) {
@@ -236,7 +257,7 @@
                 layer.close(index);
                 let loading = layer.load();
                 $.ajax({
-                    url: MODULE_PATH + "batchRemove/" + ids,
+                    url: '',
                     dataType: 'json',
                     type: 'delete',
                     success: function (result) {
@@ -260,7 +281,7 @@
         }
 
         window.refresh = function () {
-            table.reload('role-table');
+            table.reload('user-table');
         }
     })
 </script>

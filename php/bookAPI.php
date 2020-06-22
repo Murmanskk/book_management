@@ -44,13 +44,13 @@ switch ($op) {
             }
         } else {
             if ($book_name && !$cate_id) {
-                $sql = "SELECT isbn,book_name,book_author,publisher,cate,price,quantity,brrow_nums,cate_name FROM book left join cate on book.cate = cate.cate_id where book_name like '%{$book_name}%' LIMIT {$page},{$limit}";
+                $sql = "SELECT isbn,book_name,book_author,publisher,cate,price,quantity,brrow_nums,cate_name FROM book left join cate on book.cate = cate.cate_id where book_name like '%{$book_name}%' AND book_status = 0 LIMIT {$page},{$limit}";
             } else if (!$book_name && $cate_id) {
-                $sql = "SELECT isbn,book_name,book_author,publisher,cate,price,quantity,brrow_nums,cate_name FROM book left join cate on book.cate = cate.cate_id where cate='{$cate_id}' LIMIT {$page},{$limit}";
+                $sql = "SELECT isbn,book_name,book_author,publisher,cate,price,quantity,brrow_nums,cate_name FROM book left join cate on book.cate = cate.cate_id where cate='{$cate_id}' AND book_status = 0 LIMIT {$page},{$limit}";
             } else if ($book_name && $cate_id) {
-                $sql = "SELECT isbn,book_name,book_author,publisher,cate,price,quantity,brrow_nums,cate_name FROM book left join cate on book.cate = cate.cate_id where book_name like '%{$book_name}%' AND cate='{$cate_id}' LIMIT {$page},{$limit}";
+                $sql = "SELECT isbn,book_name,book_author,publisher,cate,price,quantity,brrow_nums,cate_name FROM book left join cate on book.cate = cate.cate_id where book_name like '%{$book_name}%' AND cate='{$cate_id}' AND book_status = 0 LIMIT {$page},{$limit}";
             } else {
-                $sql = "SELECT isbn,book_name,book_author,publisher,cate,price,quantity,brrow_nums,cate_name FROM book left join cate on book.cate = cate.cate_id LIMIT {$page},{$limit}";
+                $sql = "SELECT isbn,book_name,book_author,publisher,cate,price,quantity,brrow_nums,cate_name FROM book left join cate on book.cate = cate.cate_id where book_status = 0 LIMIT {$page},{$limit}";
             }
         }
         $res = $mySQLi->query($sql);

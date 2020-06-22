@@ -242,24 +242,40 @@ session_start();
 					</div>
 				</div>
 			</div>
-
+			<div class="layui-col-xs12 layui-col-md8">
+				<div class="layui-card">
+					<div class="layui-card-header">每日一句</div>
+					<div class="layui-card-body daywords">
+					</div>
+				</div>
+			</div>
 
 		</div>
 		<!--</div>-->
 		<script src="../../component/layui/layui.js" charset="utf-8"></script>
-		<script>
+		<script type="text/javascript">
 			layui.use(['layer', 'element', 'carousel'], function() {
-				var $ = layui.jquery,
-					layer = layui.layer;
-				var carousel = layui.carousel;
-				//建造实例
-				carousel.render({
-					elem: '#test1',
-					width: '100%',
-					arrow: 'hover', //始终显示箭头
-					//,anim: 'updown' //切换动画方式
-					height: '300px'
-				});
+				layer.ready(function(params) {
+					var $ = layui.jquery,
+						layer = layui.layer;
+					var carousel = layui.carousel;
+
+					//建造实例
+					carousel.render({
+						elem: '#test1',
+						width: '100%',
+						arrow: 'hover', //始终显示箭头
+						//,anim: 'updown' //切换动画方式
+						height: '300px'
+					});
+					$.ajax({
+						method: 'post',
+						url: 'https://v1.alapi.cn/api/mingyan?typeid=22',
+						success: function(data) {
+							$('.daywords').text(data.data.content + '---' + data.data.author);
+						}
+					})
+				})
 
 			});
 		</script>
