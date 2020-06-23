@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-22 09:46:16
- * @LastEditTime: 2020-06-22 17:31:27
+ * @LastEditTime: 2020-06-23 10:30:07
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \books_management\view\user\edit.html
@@ -80,7 +80,8 @@
                     type: 'post',
                     success: function (result) {
                         if (result.code == 0) {
-                            layer.msg(result.msg, {
+                            layer.open(
+                                result.msg, {
                                 icon: 1,
                                 time: 1000
                             }, function () {

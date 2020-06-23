@@ -2,7 +2,7 @@
 /*
  * @Author: your name
  * @Date: 2020-06-21 19:32:54
- * @LastEditTime: 2020-06-22 16:37:38
+ * @LastEditTime: 2020-06-23 20:30:14
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \books_management\php\userAPI.php
@@ -37,9 +37,9 @@ switch ($op) {
             $page = 0;
         }
         if($tel){
-            $sql = "SELECT * FROM user WHERE tel like '%{$tel}%' AND access_id = 2 LIMIT {$page}, {$limit}";
+            $sql = "SELECT user_id,user_name,sex,tel,email,user_status,borrow_times,access_id FROM user WHERE tel like '%{$tel}%' AND access_id = 2 LIMIT {$page}, {$limit}";
         }else{
-            $sql = "SELECT * FROM user WHERE access_id = 2 LIMIT {$page}, {$limit}";
+            $sql = "SELECT user_id,user_name,sex,tel,email,user_status,borrow_times,access_id FROM user WHERE access_id = 2 LIMIT {$page}, {$limit}";
         }
         if($res = $mySQLi->query($sql)){
             $res_arr = $res->fetch_all(MYSQLI_ASSOC);
@@ -70,6 +70,79 @@ switch ($op) {
             // echo $mySQLi->error;
             $responseData['code'] = 1;
             $responseData['msg'] = '修改信息失败';
+            echo json_encode($responseData);
+        }
+        break;
+    case 'addUser':
+        if ($_SESSION['access'] != 1) {
+            die(json_encode(array('code' => -1, 'msg' => '无权限')));
+        }
+        $user_data = file_get_contents("php://input");
+        $user_data = json_decode($user_data);
+        //默认密码
+        $pwd = '8888';
+        $repwd = md5($pwd);
+        $sql = "INSERT INTO user(user_name,tel,email,password) VALUES ('{$user_data->user_name}', '{$user_data->tel}', '{$user_data->email}', '{$repwd}')";
+        if($mySQLi->query($sql)){
+            $responseData['msg'] = '添加用户成功，用户名为：'. $user_data->user_name.'。默认密码为：'.$pwd.'请登陆后修改密码！';
+            echo json_encode($responseData);
+        }else{
+            $responseData['code'] = 1;
+            $responseData['msg'] = '添加用户失败';
+            echo json_encode($responseData);
+        }
+        break;
+    case 'updateStatus':
+        if ($_SESSION['access'] != 1) {
+            die(json_encode(array('code' => -1, 'msg' => '无权限')));
+        }
+        $user_id = $_GET['user_id'];
+        $status = $_GET['status'];
+        function switchStatus($mySQLi, $status, $user_id)
+        {
+            $sql = 'UPDATE user SET user_status = ? WHERE user_id = ?';
+            $stmt = $mySQLi->init();
+            if ($status) {
+                $statusCode = 0;
+                $stmt = $mySQLi->prepare($sql);
+                $stmt->bind_param('ii', $statusCode, $user_id);
+                if ($stmt->execute()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                $statusCode = 1;
+                $stmt = $mySQLi->prepare($sql);
+                $stmt->bind_param('ii', $statusCode, $user_id);
+                if ($stmt->execute()) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        }
+        if (switchStatus($mySQLi, $status, $user_id)) {
+            $responseData['msg'] = '修改状态成功';
+            //echo $sql;
+            echo json_encode($responseData);
+        } else {
+            $responseData['code'] = 1;
+            $responseData['msg'] = '修改状态失败';
+            echo json_encode($responseData);
+        }
+        break;
+    case 'resetPwd':
+        $user_id = $_POST['user_id'];
+        $repwd = $_POST['password'];
+        $pwd = md5($repwd);
+        $sql = "UPDATE user SET password = '{$pwd}' WHERE user_id = '{$user_id}'";
+        if($mySQLi->query($sql)){
+            $responseData['msg'] = '重置成功';
+            echo json_encode($responseData);
+        }else{
+            $responseData['code'] = 1;
+            $responseData['msg'] = '重置失败';
             echo json_encode($responseData);
         }
         break;

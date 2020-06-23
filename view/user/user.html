@@ -96,11 +96,6 @@
                     align: 'center',
                 },
                 {
-                    title: '密码',
-                    field: 'password',
-                    align: 'center',
-                },
-                {
                     title: '封禁',
                     field: 'user_status',
                     align: 'center',
@@ -143,6 +138,43 @@
                 window.remove(obj);
             } else if (obj.event === 'edit') {
                 window.edit(obj);
+            } else if (obj.event === 'reset') {
+                let index2 = layer.open({
+                        content: '确定重置该用户密码？',
+                        icon: 3,
+                        btn: ['确定', '取消'],
+                        yes: function () {
+                            data = obj.data;
+                            layer.prompt({
+                                title: '将' + obj.data.user_name + '密码重置为：',
+                                formType: 1
+                            }, function (pass, index) {
+                                $.ajax({
+                                    url: '../../php/userAPI.php?s=resetPwd',
+                                    data: {
+                                        user_id: data.user_id,
+                                        password: pass
+                                    },
+                                    type: 'post',
+                                    success: function (res) {
+                                        res = JSON.parse(res);
+                                        if (res.code == 0) {
+                                            layer.open({
+                                                content: res.msg,
+                                                icon: 1,
+                                                end:function () {
+                                                    layer.closeAll();
+                                                }
+                                            });
+
+                                        }
+                                    }
+                                })
+                            })
+                        }
+                    }
+
+                )
             }
         });
 
@@ -163,20 +195,47 @@
             return false;
         });
 
-        form.on('switch(role-enable)', function (obj) {
-            layer.tips(this.value + ' ' + this.name + '：' + obj.elem.checked, obj.othis);
+        form.on('switch(user-enable)', function (obj) {
+            status = obj.elem.checked == false ? 1 : 0;
+            console.log('11');
+
+            $.getJSON('../../php/userAPI.php?s=updateStatus&user_id=' + obj.value + '&status=' + status,
+                function (json) {
+                    console.log(json);
+                    if (json.code != 0) {
+                        layer.open({
+                            title: '提示',
+                            icon: 7,
+                            content: json.msg
+                        });
+                        obj.elem.checked = !obj.elem.checked;
+                        form.render('checkbox');
+                    } else {
+                        if (obj.elem.checked == 1) {
+                            layer.msg('已启用该用户', {
+                                time: 1000
+                            });
+                        } else {
+                            layer.msg('已禁用该用户', {
+                                time: 1000
+                            });
+                        }
+                    }
+
+                })
         });
 
+        //添加用户
         window.add = function () {
             layer.open({
                 type: 2,
-                title: '新增',
+                title: '添加用户',
                 shade: 0.1,
-                area: ['500px', '400px'],
+                area: ['300px', '280px'],
                 content: 'add.html',
             });
         }
-
+        //修改用户信息
         window.edit = function (edit) {
             var index = layui.layer.open({
                 type: 2,
