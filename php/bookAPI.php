@@ -12,9 +12,9 @@ switch ($op) {
         if ($book_name&&!$cate_id) {
             $sqlCount = "SELECT * FROM book where book_name like '%{$book_name}%'";
         } else if($book_name && $cate_id){
-            $sqlCount = "SELECT * FROM book where book_name like '%{$book_name}%' AND cate='{$cate_id}'";
+            $sqlCount = "SELECT * FROM book where book_name like '%{$book_name}%' AND cate_id='{$cate_id}'";
         } else if (!$book_name && $cate_id) {
-            $sqlCount = "SELECT * FROM book where cate='{$cate_id}'";
+            $sqlCount = "SELECT * FROM book where cate_id='{$cate_id}'";
         }else {
             $sqlCount = "SELECT * FROM book";
         }
@@ -34,23 +34,23 @@ switch ($op) {
         }
         if ($_SESSION['access'] == 1) { //如果是管理员
             if ($book_name&&!$cate_id) {
-                $sql = "SELECT * FROM book left join cate on book.cate = cate.cate_id where book_name like '%{$book_name}%' LIMIT {$page},{$limit}";
+                $sql = "SELECT * FROM book left join cate USING(cate_id) where book_name like '%{$book_name}%' LIMIT {$page},{$limit}";
             } else if(!$book_name && $cate_id){
-                $sql = "SELECT * FROM book left join cate on book.cate = cate.cate_id where cate='{$cate_id}' LIMIT {$page},{$limit}";
+                $sql = "SELECT * FROM book left join cate USING(cate_id) where cate_id='{$cate_id}' LIMIT {$page},{$limit}";
             } else if ($book_name && $cate_id) {
-                $sql = "SELECT * FROM book left join cate on book.cate = cate.cate_id where book_name like '%{$book_name}%' AND cate='{$cate_id}' LIMIT {$page},{$limit}";
+                $sql = "SELECT * FROM book left join cate USING(cate_id) where book_name like '%{$book_name}%' AND cate_id='{$cate_id}' LIMIT {$page},{$limit}";
             } else {
-                $sql = "SELECT * FROM book left join cate on book.cate = cate.cate_id LIMIT {$page},{$limit}";
+                $sql = "SELECT * FROM book left join cate USING(cate_id) LIMIT {$page},{$limit}";
             }
         } else {
             if ($book_name && !$cate_id) {
-                $sql = "SELECT isbn,book_name,book_author,publisher,cate,price,quantity,brrow_nums,cate_name FROM book left join cate on book.cate = cate.cate_id where book_name like '%{$book_name}%' AND book_status = 0 LIMIT {$page},{$limit}";
+                $sql = "SELECT isbn,book_name,book_author,publisher,cate_id,price,quantity,brrow_nums,cate_name FROM book left join cate USING(cate_id) where book_name like '%{$book_name}%' AND book_status = 0 LIMIT {$page},{$limit}";
             } else if (!$book_name && $cate_id) {
-                $sql = "SELECT isbn,book_name,book_author,publisher,cate,price,quantity,brrow_nums,cate_name FROM book left join cate on book.cate = cate.cate_id where cate='{$cate_id}' AND book_status = 0 LIMIT {$page},{$limit}";
+                $sql = "SELECT isbn,book_name,book_author,publisher,cate_id,price,quantity,brrow_nums,cate_name FROM book left join cate USING(cate_id) where cate_id='{$cate_id}' AND book_status = 0 LIMIT {$page},{$limit}";
             } else if ($book_name && $cate_id) {
-                $sql = "SELECT isbn,book_name,book_author,publisher,cate,price,quantity,brrow_nums,cate_name FROM book left join cate on book.cate = cate.cate_id where book_name like '%{$book_name}%' AND cate='{$cate_id}' AND book_status = 0 LIMIT {$page},{$limit}";
+                $sql = "SELECT isbn,book_name,book_author,publisher,cate_id,price,quantity,brrow_nums,cate_name FROM book left join cate USING(cate_id) where book_name like '%{$book_name}%' AND cate_id='{$cate_id}' AND book_status = 0 LIMIT {$page},{$limit}";
             } else {
-                $sql = "SELECT isbn,book_name,book_author,publisher,cate,price,quantity,brrow_nums,cate_name FROM book left join cate on book.cate = cate.cate_id where book_status = 0 LIMIT {$page},{$limit}";
+                $sql = "SELECT isbn,book_name,book_author,publisher,cate_id,price,quantity,brrow_nums,cate_name FROM book left join cate USING(cate_id) where book_status = 0 LIMIT {$page},{$limit}";
             }
         }
         $res = $mySQLi->query($sql);
@@ -58,14 +58,7 @@ switch ($op) {
         $responseData["data"] = $res_arr;
         echo json_encode($responseData);
         break;
-    case 'getCate':
-        $sql = "SELECT * FROM cate";
-        $res = $mySQLi->query($sql);
-        $res_arr = $res->fetch_all(MYSQLI_ASSOC);
-        $responseData["count"] = $res->num_rows;
-        $responseData["data"] = $res_arr;
-        echo json_encode($responseData);
-        break;
+
     case 'addBook':     //添加图书
         if ($_SESSION['access'] != 1) {
             die(json_encode(array('code' => -1, 'msg' => '无权限')));
@@ -87,7 +80,7 @@ switch ($op) {
             }
         } else {
             //不存在
-            $sql = 'INSERT INTO book(isbn, book_name, book_author, publisher, cate, price, quantity) VALUES (?,?,?,?,?,?,?)';
+            $sql = 'INSERT INTO book(isbn, book_name, book_author, publisher, cate_id, price, quantity) VALUES (?,?,?,?,?,?,?)';
             $stmt = $mySQLi->init();
             $stmt = $mySQLi->prepare($sql);
             $stmt->bind_param('ssssidi', $book_data->isbn, $book_data->book_name, $book_data->book_author, $book_data->publisher, $book_data->cate, $book_data->price, $book_data->quantity);
@@ -110,7 +103,7 @@ switch ($op) {
         $sql = "UPDATE book SET book_name = '{$book_data->book_name}',
                                 book_author = '{$book_data->book_author}',
                                 publisher = '{$book_data->publisher}',
-                                cate = '{$book_data->cate}',
+                                cate_id = '{$book_data->cate}',
                                 price = '{$book_data->price}',
                                 quantity = '{$book_data->quantity}'
                             WHERE isbn = '{$book_data->isbn}'";

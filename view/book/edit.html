@@ -89,7 +89,7 @@
             let form = layui.form;
             let $ = layui.jquery;
             //动态获取下拉框
-            $.post('../../php/bookAPI.php?s=getCate', function (res) {
+            $.post('../../php/cateAPI.php?s=getCate', function (res) {
                 $('#cateList').empty();
                 $('#cateList').append("<option value=''>请选择</option>");
                 res = JSON.parse(res);

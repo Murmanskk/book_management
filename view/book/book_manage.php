@@ -80,7 +80,7 @@ if ($_SESSION['access'] != 1) {
         let table = layui.table;
         let form = layui.form;
         let $ = layui.jquery;
-        $.post('../../php/bookAPI.php?s=getCate', function(res) {
+        $.post('../../php/cateAPI.php?s=getCate', function(res) {
             $('#cateList').empty();
             $('#cateList').append("<option value=''>请选择</option>");
             res = JSON.parse(res);
@@ -138,7 +138,7 @@ if ($_SESSION['access'] != 1) {
                     title: '数量',
                     align: 'center',
                     field: 'quantity',
-                    width: 70
+                    width: 70,
                 },
                 {
                     title: '已借出',

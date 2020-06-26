@@ -2,7 +2,7 @@
 /*
  * @Author: your name
  * @Date: 2020-06-17 14:20:03
- * @LastEditTime: 2020-06-21 19:19:07
+ * @LastEditTime: 2020-06-26 18:26:50
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \Javascriptd:\wwwroot\books_management\php\lendAPI.php
@@ -68,7 +68,7 @@ switch ($op) {
                                     l.lend_time,
                                     l.lend_status 
                                 FROM lend_info AS l 
-                                left JOIN user AS u on l.user_id = u.user_id 
+                                left JOIN user AS u USING(user_id) 
                                 left JOIN book AS b on l.isbn = b.isbn 
                                 where l.user_id IN (SELECT user_id FROM user WHERE user_name LIKE '%{$user_name}%')";
             } else if ($user_name && $lend_status) {
