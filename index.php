@@ -105,7 +105,7 @@ if (empty($_SESSION['uid'])) {
 				pearTab.addTabOnlyByElem("content", {
 					id: 7,
 					title: "我的信息",
-					url: "view/system/person.html",
+					url: "view/person/person.html",
 					close: true
 				})
 			})
