@@ -2,7 +2,7 @@
 /*
  * @Author: your name
  * @Date: 2020-06-26 19:36:43
- * @LastEditTime: 2020-06-26 23:03:59
+ * @LastEditTime: 2020-06-26 23:45:22
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \books_management\php\cateAPI.php
@@ -43,6 +43,20 @@ switch ($op) {
             //echo $mySQLi->error;
             echo json_encode($responseData);
         }
+        break;
+    case 'editCate':
+            $cate_name = $_POST['cateName'];
+            $cate_id = $_POST['cateId'];
+            $sql = "UPDATE cate SET cate_name = '{$cate_name}' WHERE cate_id = '{$cate_id}'";
+            if($mySQLi->query($sql)){
+                $responseData['msg'] = '修改成功';
+                echo json_encode($responseData);
+            } else {
+                $responseData['code'] = -1;
+                $responseData['msg'] = '修改失败';
+                //echo $mySQLi->error;
+                echo json_encode($responseData);
+            }
         break;
     default:
         # code...

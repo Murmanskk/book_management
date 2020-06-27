@@ -2,7 +2,7 @@
 /*
  * @Author: your name
  * @Date: 2020-06-21 17:35:15
- * @LastEditTime: 2020-06-26 23:26:12
+ * @LastEditTime: 2020-06-26 23:39:36
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \books_management\view\book\cate_manage.php
@@ -90,9 +90,29 @@ if ($_SESSION['access'] != 1) {
         });
 
 
-        table.on('tool(cate-bar)', function(obj) {
+        table.on('tool(cateList)', function(obj) {
             if (obj.event === 'edit') {
-                alert('111');
+                layer.prompt({
+                    title: '将分类名“'+obj.data.cate_name+'”修改为：'
+                }, function(val, index) {
+                    layer.confirm('确定修改？', function() {
+                        //do something
+                        $.post('../../php/cateAPI.php?s=editCate', {
+                            cateName: val,
+                            cateId: obj.data.cate_id
+                        }, function(res) {
+                            res = JSON.parse(res);
+                            if (res.code == 0) {
+                                layer.msg(res.msg);
+                                refresh();
+                            } else {
+                                layer.msg(res.msg);
+                                refresh();
+                            }
+                        })
+                        layer.close(index);
+                    });
+                });
 
             } else if (obj.event === 'remove') {
                 //

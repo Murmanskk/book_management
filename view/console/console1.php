@@ -1,5 +1,7 @@
 <?php
-session_start();
+include_once '../../php/conn.php';
+$sql = "SELECT tel,email FROM user WHERE user_id = '{$_SESSION['uid']}'";
+$res = ($mySQLi->query($sql))->fetch_all(MYSQLI_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -176,10 +178,10 @@ session_start();
 
 						<h1>欢迎你！ <span style="color:#5FB878;"><?php echo $_SESSION['username']; ?></span></h1>
 						<hr>
-						<h2>手机号：</h2>
-						<h2>邮&nbsp;&nbsp;&nbsp;箱：</h2>
+						<h2>手机号：<?php echo $res[0]['tel']; ?></h2>
+						<h2>邮&nbsp;&nbsp;&nbsp;箱：<?php echo $res[0]['email']; ?></h2>
 						<div style="width: 100%; text-align:center;">
-							<button type="" class="pear-btn pear-btn-primary modify-btn" style="margin:15px 0 15px 0">修改信息</button>
+							<button type="" class="pear-btn pear-btn-primary modify-btn" style="margin:15px 0 15px 0">请在我的信息页修改信息</button>
 						</div>
 
 					</div>
@@ -254,13 +256,13 @@ session_start();
 		<!--</div>-->
 		<script src="../../component/layui/layui.js" charset="utf-8"></script>
 		<script type="text/javascript">
-			layui.use(['layer', 'element', 'carousel'], function() {
+			layui.use(['layer', 'element', 'carousel', 'jquery'], function() {
 				layer.ready(function(params) {
-					var $ = layui.jquery,
+					let $ = layui.jquery,
 						layer = layui.layer;
-					var carousel = layui.carousel;
+					let pearTab = layui.pearTab;
+					let carousel = layui.carousel;
 
-					//建造实例
 					carousel.render({
 						elem: '#test1',
 						width: '100%',

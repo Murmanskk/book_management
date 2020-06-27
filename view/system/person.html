@@ -1,137 +1,182 @@
+<!--
+ * @Author: your name
+ * @Date: 2020-06-16 18:42:03
+ * @LastEditTime: 2020-06-27 22:40:08
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \books_management\view\system\person.html
+-->
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8">
-		<title></title>
-		<link rel="stylesheet" href="../../admin/css/pearButton.css"/>
-		<link rel="stylesheet" href="../../component/layui/css/layui.css" />
-		<style>
-			.pear-container {
-				background-color: whitesmoke;
-				margin: 10px;
-			}
-			.layui-body{
-				    padding: 25px;
-			}
-			.text-center{
-				text-align: center;
-			}
-			.user-info-head{
-				    width: 110px;
-				    height: 110px;
-				    line-height: 110px;
-				    position: relative;
-				    display: inline-block;
-				    border: 2px solid #eee;
-				    border-radius: 50%;
-				    overflow: hidden;
-				    cursor: pointer;
-				    margin: 0 auto;
-			}
-			.layui-line-dash {
-			    border-bottom: 1px dashed #ccc;
-			    margin: 15px 0;
-			}
-		</style>
-	</head>
-	<body class="pear-container">
-		<div class="layui-row layui-col-space10">
-			<div class="layui-col-md3">
-				<div class="layui-card">
-					<div class="layui-card-header">头像展示</div>
 
-					<div class="layui-card-body" style="padding: 25px;">
-						<div class="text-center layui-text">
-							<div class="user-info-head" id="userInfoHead">
-								<img src="../../admin/images/avatar.jpg" width="115px" height="115px" alt="">
-							</div>
-							<h2 style="padding-top: 20px;font-size: 20px;">就眠仪式</h2>
-							<p style="padding-top: 8px;margin-top: 10px;">海纳百川，有容乃大</p>
-						</div>
-						<div class="layui-text" style="padding-top: 30px;">
+<head>
+	<meta charset="utf-8">
+	<title></title>
+	<link rel="stylesheet" href="../../admin/css/pearButton.css" />
+	<link rel="stylesheet" href="../../component/layui/css/layui.css" />
+	<style>
+		.pear-container {
+			background-color: whitesmoke;
+			margin: 10px;
+		}
 
-						</div>
+		.layui-body {
+			padding: 25px;
+		}
 
-						<div>
-							<div class="process-title" style="position: absolute;margin-top: -6px;">
-								&nbsp;&nbsp;完 成 度 :
-							</div>
-							<div style="margin-top: 28px;width: 65%;margin-left: 80px;" class="layui-progress">
-								<div class="layui-progress-bar layui-bg-orange" lay-percent="30%"></div>
-							</div>
-							<br>
-							<div class="process-title" style="position: absolute;margin-top: 7px;">
-								&nbsp;&nbsp;容 错 率 :
-							</div>
-							<div class="layui-progress" style="margin-top: 15px;width: 65%;margin-left: 80px;">
-								<div class="layui-progress-bar layui-bg-blue" lay-percent="40%"></div>
-							</div>
-							<br>
-							<div class="process-title" style="position: absolute;margin-top: 7px;">
-								&nbsp;&nbsp;健 康 度 :
-							</div>
-							<div class="layui-progress" style="margin-top: 15px;width: 65%;margin-left: 80px;">
-								<div class="layui-progress-bar layui-bg-green" lay-percent="88%"></div>
+		.text-center {
+			text-align: center;
+		}
+
+		.user-info-head {
+			width: 110px;
+			height: 110px;
+			line-height: 110px;
+			position: relative;
+			display: inline-block;
+			border: 2px solid #eee;
+			border-radius: 50%;
+			overflow: hidden;
+			cursor: pointer;
+			margin: 0 auto;
+		}
+
+		.layui-line-dash {
+			border-bottom: 1px dashed #ccc;
+			margin: 15px 0;
+		}
+	</style>
+</head>
+
+<body class="pear-container">
+	<div class="layui-row layui-col-space10">
+
+		<div class="layui-col-md9">
+			<div class="layui-card">
+				<div class="layui-card-header">个人信息 </div>
+				<div class="layui-card-body">
+					<div class="layui-form user-info-form layui-text" style="max-width: 400px;padding-top: 25px;">
+						<div class="layui-form-item">
+							<label class="layui-form-label">用户名</label>
+							<div class="layui-input-block">
+								<input type="text" name="user_name" class="user_name layui-input" lay-verify="required"
+									required="">
 							</div>
 						</div>
-					</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">手机号</label>
+							<div class="layui-input-block">
+								<input type="text" name="tel" class="tel layui-input" lay-verify="required" required="">
+							</div>
+						</div>
+						<div class="layui-form-item">
+							<label class="layui-form-label">邮箱</label>
+							<div class="layui-input-block">
+								<input type="text" name="email" class="email layui-input" lay-verify="required"
+									required="">
+							</div>
+						</div>
 
-				</div>
-			</div>
-			<div class="layui-col-md9">
-				<div class="layui-card">
-					<div class="layui-card-header">个人信息 </div>
-					<div class="layui-card-body">
-						<div class="layui-form user-info-form layui-text" style="max-width: 400px;padding-top: 25px;">
-							<div class="layui-form-item">
-								<label class="layui-form-label">企业邮箱:</label>
-								<div class="layui-input-block">
-									<input type="text" name="email" value="peardesign@alipay.com" class="layui-input" lay-verify="required"
-									 required="">
-								</div>
-							</div>
-							<div class="layui-form-item">
-								<label class="layui-form-label">账户名称:</label>
-								<div class="layui-input-block">
-									<input type="text" name="name" value="就眠仪式" class="layui-input" lay-verify="required" required="">
-								</div>
-							</div>
-							<div class="layui-form-item">
-								<label class="layui-form-label">个人简介:</label>
-								<div class="layui-input-block">
-									<textarea name="desc" placeholder="个人简介" class="layui-textarea">帅气逼人</textarea>
-								</div>
-							</div>
-							<div class="layui-form-item">
-								<label class="layui-form-label">街道地址:</label>
-								<div class="layui-input-block">
-									<input type="text" name="address" value="高新区工专路 77 号" class="layui-input" lay-verify="required" required="">
-								</div>
-							</div>
-							<div class="layui-form-item">
-								<label class="layui-form-label">联系电话:</label>
-								<div class="layui-input-block">
-									<input type="text" name="address" value="1555555555" class="layui-input" lay-verify="required" required="">
-								</div>
-							</div>
-							<div class="layui-form-item">
-								<div class="layui-input-block">
-									<button class="pear-btn pear-btn-success" lay-filter="userInfoSubmit" lay-submit="">
-										更新信息
-									</button>
-								</div>
+						<div class="layui-form-item">
+							<div class="layui-input-block">
+								<button class="modify-info pear-btn pear-btn-success" lay-filter="modify-info"
+									lay-submit="">
+									更新信息
+								</button>
+								<button class="modify-password pear-btn pear-btn-danger" lay-filter="modify-password"
+									lay-submit="">
+									修改密码
+								</button>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<script src="../../component/layui/layui.js"></script>
-		<script>
-			layui.use(['element'], function() {
-				var element = layui.element;
+		<div class="layui-col-md3">
+			<div class="layui-card top-panel">
+				<div class="layui-card-header">借阅次数</div>
+				<div class="layui-card-body">
+					<div class="layui-row layui-col-space5">
+						<div class="lend layui-col-xs8 layui-col-md8 top-panel-number">
+							111
+						</div>
+						<div class="layui-col-xs4 layui-col-md4  top-panel-tips">
+							<i class="layui-icon layui-icon-ok" style="color: #5FB878;"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="layui-card top-panel">
+				<div class="layui-card-header">超期次数</div>
+				<div class="layui-card-body">
+					<div class="layui-row layui-col-space5">
+						<div class="overdue layui-col-xs8 layui-col-md8 top-panel-number">
+							111
+						</div>
+						<div class="layui-col-xs4 layui-col-md4  top-panel-tips">
+							<i class="layui-icon layui-icon-ok" style="color: #5FB878;"></i>
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</div>
+	</div>
+	<script src="../../component/layui/layui.js"></script>
+	<script>
+		layui.use(['element', 'jquery', 'layer'], function () {
+			var element = layui.element;
+			let $ = layui.jquery;
+			$.get('../../php/personAPI.php?s=getMyInfo', function (res) {
+				res = JSON.parse(res);
+				let data = res.data[0];
+				$('.user_name').val(data.user_name);
+				$('.email').val(data.email);
+				$('.tel').val(data.tel);
+				$('.lend').text(data.borrow_times);
+				$('.overdue').text(data.overdue_times);
+			})
+			$(".modify-info").on('click', function () {
+				layui.layer.open({
+					title: '提示',
+					content: '确定更新信息？',
+					btn: ['是的', '按错了'],
+					yes: function () {
+						$.ajax({
+							url: '../../php/personAPI.php?s=updateInfo',
+							type: 'post',
+							data:{
+								user_name:$('.user_name').val(),
+								email:$('.email').val(),
+								tel:$('.tel').val()
+							},
+							success: function (result) {
+								result = JSON.parse(result);
+								if (result.code == 0) {
+									layer.msg(result.msg, {
+										icon: 1,
+										time: 1000
+									}, function () {
+										setTimeout('window.location.reload()',100);
+									});
+								} else {
+									layer.msg(result.msg, {
+										icon: 2,
+										time: 1000
+									});
+									setTimeout('window.location.reload()',1000);
+								}
+							}
+						})
+					}
+				})
+			})
+			$(".modify-password").on('click', function () {
 
 			})
-		</script>
-	</body>
+		})
+	</script>
+</body>
+
 </html>

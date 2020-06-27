@@ -60,7 +60,7 @@
         let form = layui.form;
         let $ = layui.jquery;
 
-        $.post('../../php/bookAPI.php?s=getCate', function (res) {
+        $.post('../../php/cateAPI.php?s=getCate', function (res) {
             $('#cateList').empty();
             $('#cateList').append("<option value=''>全部</option>");
             res = JSON.parse(res);

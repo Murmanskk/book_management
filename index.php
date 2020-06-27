@@ -103,8 +103,8 @@ if (empty($_SESSION['uid'])) {
 
 			$("body").on("click", ".pearson", function() {
 				pearTab.addTabOnlyByElem("content", {
-					id: 111,
-					title: "个人信息",
+					id: 7,
+					title: "我的信息",
 					url: "view/system/person.html",
 					close: true
 				})

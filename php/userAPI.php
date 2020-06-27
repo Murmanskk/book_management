@@ -2,7 +2,7 @@
 /*
  * @Author: your name
  * @Date: 2020-06-21 19:32:54
- * @LastEditTime: 2020-06-26 19:35:16
+ * @LastEditTime: 2020-06-27 20:59:06
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \books_management\php\userAPI.php
@@ -146,6 +146,7 @@ switch ($op) {
             echo json_encode($responseData);
         }
         break;
+    
     default:
         # code...
         break;
