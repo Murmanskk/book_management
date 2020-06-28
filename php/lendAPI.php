@@ -2,7 +2,7 @@
 /*
  * @Author: your name
  * @Date: 2020-06-17 14:20:03
- * @LastEditTime: 2020-06-26 18:26:50
+ * @LastEditTime: 2020-06-28 23:18:35
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \Javascriptd:\wwwroot\books_management\php\lendAPI.php
@@ -244,7 +244,8 @@ switch ($op) {
             $mySQLi->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
             $sql = "UPDATE lend_info SET lend_status = 5 WHERE lend_id = '{$lend_id}'";
             $sql1 = "UPDATE book SET brrow_nums = brrow_nums-1 WHERE isbn IN (SELECT isbn FROM lend_info WHERE lend_id = '{$lend_id}')";
-            if ($mySQLi->query($sql)&& $mySQLi->query($sql1)) {
+            $sql2 = "UPDATE user SET borrow_times = borrow_times+1 WHERE user_id in(SELECT user_id FROM lend_info WHERE lend_id = '{$lend_id}')";
+            if ($mySQLi->query($sql)&& $mySQLi->query($sql1)&& $mySQLi->query($sql2)) {
                 $mySQLi->commit();
                 $responseData['msg'] = '已确认';
                 echo json_encode($responseData);
@@ -277,7 +278,7 @@ switch ($op) {
                     $responseData['msg'] = '取消失败';
                     echo json_encode($responseData);
                 }
-            }else{
+            }else if($res_data['lend_status'] == 4){
                 $sql = "UPDATE lend_info SET lend_status = 2 WHERE lend_id = '{$lend_id}'";
                 if ($mySQLi->query($sql)) {
                     $responseData['msg'] = '已取消';
@@ -288,6 +289,14 @@ switch ($op) {
                     $responseData['msg'] = '取消失败';
                     echo json_encode($responseData);
                 }
+            }else if($res_data['lend_status'] == 2 || $res_data['lend_status'] == 5){
+                $responseData['code'] = 1;
+                $responseData['msg'] = '取消失败，当前申请已批准！';
+                echo json_encode($responseData);
+            }else if($res_data['lend_status'] == 3){
+                $responseData['code'] = 1;
+                $responseData['msg'] = '取消失败，当前申请已拒绝！';
+                echo json_encode($responseData);
             }
         } else {
             $responseData['code'] = -1;
