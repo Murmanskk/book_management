@@ -2,6 +2,14 @@
 include_once '../../php/conn.php';
 $sql = "SELECT tel,email FROM user WHERE user_id = '{$_SESSION['uid']}'";
 $res = ($mySQLi->query($sql))->fetch_all(MYSQLI_ASSOC);
+
+$sql1 = "SELECT SUM(quantity) AS num FROM book";
+$res1 = ($mySQLi->query($sql1))->fetch_all(MYSQLI_ASSOC);;
+$book_nums = $res1[0]['num'];
+
+$sql2 = "SELECT COUNT(*) AS num FROM cate";
+$res2 = ($mySQLi->query($sql2))->fetch_all(MYSQLI_ASSOC);;
+$cate_nums = $res2[0]['num'];
 ?>
 
 <!DOCTYPE html>
@@ -178,26 +186,16 @@ $res = ($mySQLi->query($sql))->fetch_all(MYSQLI_ASSOC);
 
 						<h1>欢迎你！ <span style="color:#5FB878;"><?php echo $_SESSION['username']; ?></span></h1>
 						<hr>
-						<h2>手机号：<?php echo $res[0]['tel']; ?></h2>
-						<h2>邮&nbsp;&nbsp;&nbsp;箱：<?php echo $res[0]['email']; ?></h2>
-						<div style="width: 100%; text-align:center;">
-							<button type="" class="pear-btn pear-btn-primary modify-btn" style="margin:15px 0 15px 0">请在我的信息页修改信息</button>
-						</div>
-
+						<?php if ($_SESSION['access'] == 2) : ?>
+							<h2>手机号：<?php echo $res[0]['tel']; ?></h2>
+							<h2>邮&nbsp;&nbsp;&nbsp;箱：<?php echo $res[0]['email']; ?></h2>
+							<div style="width: 100%; text-align:center;">
+								<button type="" class="pear-btn pear-btn-primary modify-btn" style="margin:15px 0 15px 0">请在我的信息页修改信息</button>
+							</div>
+						<?php endif; ?>
 					</div>
 
 				</div>
-			</div>
-			<div class="layui-col-xs12 layui-col-md8">
-				<div class="layui-carousel" id="test1">
-					<div carousel-item>
-						<div><img src="https://s1.ax1x.com/2020/05/27/tFjgYQ.jpg" alt="" style="width:100%"></div>
-						<div><img src="https://s2.ax1x.com/2019/09/22/upXHYT.jpg" alt="" style="width:100%"></div>
-						<div><img src="https://s2.ax1x.com/2019/09/22/upOKbt.jpg" alt="" style="width:100%"></div>
-					</div>
-				</div>
-			</div>
-			<div class="layui-col-xs12 layui-col-md4">
 				<div class="layui-card">
 					<div class="layui-card-header">系统公告</div>
 					<div class="layui-card-body">
@@ -214,16 +212,25 @@ $res = ($mySQLi->query($sql))->fetch_all(MYSQLI_ASSOC);
 					</div>
 				</div>
 			</div>
+			<div class="layui-col-xs12 layui-col-md8">
+				<div class="layui-carousel" id="test1">
+					<div carousel-item>
+						<div><img src="https://www.hnie.edu.cn/uploads/1584584374823.jpg" alt="" style="width:100%;height:100%"></div>
+						<div><img src="https://www.hnie.edu.cn/uploads/1555580804545.jpg" alt="" style="width:100%;height:100%"></div>
+						<div><img src="https://www.hnie.edu.cn/uploads/1555663028959.jpg" alt="" style="width:100%;height:100%"></div>
+					</div>
+				</div>
+			</div>
 			<div class="layui-col-xs6 layui-col-md4">
 				<div class="layui-card top-panel">
 					<div class="layui-card-header">馆藏图书</div>
 					<div class="layui-card-body">
 						<div class="layui-row layui-col-space5">
 							<div class="layui-col-xs8 layui-col-md8 top-panel-number">
-								6,34,4册
+								<?php echo $book_nums; ?>册
 							</div>
 							<div class="layui-col-xs4 layui-col-md4 top-panel-tips">
-								<i class="layui-icon layui-icon-component" style="color: #DD4A68;"></i>
+								<i class="layui-icon layui-icon-star" style="color: #DD4A68;"></i>
 							</div>
 						</div>
 					</div>
@@ -231,14 +238,14 @@ $res = ($mySQLi->query($sql))->fetch_all(MYSQLI_ASSOC);
 			</div>
 			<div class="layui-col-xs6 layui-col-md4">
 				<div class="layui-card top-panel">
-					<div class="layui-card-header">可借图书</div>
+					<div class="layui-card-header">共有分类</div>
 					<div class="layui-card-body">
 						<div class="layui-row layui-col-space5">
 							<div class="layui-col-xs8 layui-col-md8 top-panel-number">
-								1,34,1册
+								<?php echo $cate_nums; ?>种
 							</div>
 							<div class="layui-col-xs4 layui-col-md4  top-panel-tips">
-								<i class="layui-icon layui-icon-ok" style="color: #5FB878;"></i>
+								<i class="layui-icon layui-icon-template-1" style="color: #5FB878;"></i>
 							</div>
 						</div>
 					</div>
@@ -262,13 +269,13 @@ $res = ($mySQLi->query($sql))->fetch_all(MYSQLI_ASSOC);
 						layer = layui.layer;
 					let pearTab = layui.pearTab;
 					let carousel = layui.carousel;
-
 					carousel.render({
 						elem: '#test1',
 						width: '100%',
 						arrow: 'hover', //始终显示箭头
 						//,anim: 'updown' //切换动画方式
-						height: '300px'
+						height: '25rem'
+						//height: (W / b).toString() + "px"
 					});
 					$.ajax({
 						method: 'post',
@@ -280,6 +287,11 @@ $res = ($mySQLi->query($sql))->fetch_all(MYSQLI_ASSOC);
 				})
 
 			});
+			// window.onload = function() {
+			// 	var bannerH = $('.carousel-item img')[0].height;
+			// 	$('.layui-carousel').css('height', bannerH + 'px');
+
+			// }
 		</script>
 </body>
 
