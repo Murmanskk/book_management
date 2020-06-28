@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-16 18:42:03
- * @LastEditTime: 2020-06-27 22:40:08
+ * @LastEditTime: 2020-06-28 18:32:03
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \books_management\view\system\person.html
@@ -115,7 +115,7 @@
 							111
 						</div>
 						<div class="layui-col-xs4 layui-col-md4  top-panel-tips">
-							<i class="layui-icon layui-icon-ok" style="color: #5FB878;"></i>
+							<i class="layui-icon layui-icon-log" style="color: #5FB878;"></i>
 						</div>
 					</div>
 				</div>
@@ -123,11 +123,48 @@
 
 		</div>
 	</div>
+
+	<div id="password" style="display: none;">
+		<form class="layui-form" action="" style="width: 300px;text-align: center;padding: 30px;">
+			<div class="mainBox">
+				<div class="main-container">
+					<div class="layui-form-item layui-row layui-col-xs12">
+						<label class="layui-form-label">当前密码</label>
+						<div class="layui-input-block">
+							<input type="password" name="nowpassword" lay-verify="required" autocomplete="off"
+								placeholder="请输入当前密码" class="layui-input" lay-verify="required" required="required">
+						</div>
+					</div>
+					<div class="layui-form-item layui-row layui-col-xs12">
+						<label class="layui-form-label">修改密码</label>
+						<div class="layui-input-block">
+							<input type="text" name="afterpassword" lay-verify="required" autocomplete="off"
+								placeholder="请输入修改密码" class="layui-input" lay-verify="required" required="required">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="bottom">
+				<div class="button-container">
+					<button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit=""
+						lay-filter="m-password">
+						<i class="layui-icon layui-icon-ok"></i>
+						提交
+					</button>
+					<button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">
+						<i class="layui-icon layui-icon-refresh"></i>
+						重置
+					</button>
+				</div>
+			</div>
+		</form>
+	</div>
 	<script src="../../component/layui/layui.js"></script>
 	<script>
-		layui.use(['element', 'jquery', 'layer'], function () {
+		layui.use(['element', 'jquery', 'layer', 'form'], function () {
 			var element = layui.element;
-			let $ = layui.jquery;
+			let $ = layui.jquery,
+				form = layui.form;
 			$.get('../../php/personAPI.php?s=getMyInfo', function (res) {
 				res = JSON.parse(res);
 				let data = res.data[0];
@@ -146,10 +183,10 @@
 						$.ajax({
 							url: '../../php/personAPI.php?s=updateInfo',
 							type: 'post',
-							data:{
-								user_name:$('.user_name').val(),
-								email:$('.email').val(),
-								tel:$('.tel').val()
+							data: {
+								user_name: $('.user_name').val(),
+								email: $('.email').val(),
+								tel: $('.tel').val()
 							},
 							success: function (result) {
 								result = JSON.parse(result);
@@ -158,14 +195,15 @@
 										icon: 1,
 										time: 1000
 									}, function () {
-										setTimeout('window.location.reload()',100);
+										setTimeout('window.location.reload()',
+											100);
 									});
 								} else {
 									layer.msg(result.msg, {
 										icon: 2,
 										time: 1000
 									});
-									setTimeout('window.location.reload()',1000);
+									setTimeout('window.location.reload()', 1000);
 								}
 							}
 						})
@@ -173,7 +211,41 @@
 				})
 			})
 			$(".modify-password").on('click', function () {
-
+				let index = layui.layer.open({
+					type: 1,
+					title: '修改密码',
+					shade: 0.1,
+					area: ['390px', '240px'],
+					content: $('#password'),
+					success: function (layero, index) {
+						form.on('submit(m-password)', function (data) {
+							//console.log(JSON.stringify(data.field));
+							$.ajax({
+								url: '../../php/personAPI.php?s=modifyPwd',
+								data: JSON.stringify(data.field),
+								dataType: 'json',
+								contentType: 'application/json',
+								type: 'post',
+								success: function (result) {
+									if (result.code == 0) {
+										layer.msg(result.msg, {
+											icon: 1,
+											time: 1000
+										}, function () {
+											location.reload();
+										});
+									} else {
+										layer.msg(result.msg, {
+											icon: 2,
+											time: 1000
+										});
+									}
+								}
+							})
+							return false;
+						});
+					}
+				})
 			})
 		})
 	</script>
