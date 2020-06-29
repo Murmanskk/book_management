@@ -113,19 +113,25 @@ if ($_SESSION['access'] != 1) {
                     title: '作者',
                     field: 'book_author',
                     align: 'center',
-                    width: 100
+                    width: 80
                 },
                 {
                     title: '出版社',
                     field: 'publisher',
                     align: 'center',
-                    width: 150
+                    width: 135
                 },
                 {
                     title: '分类',
                     field: 'cate_name',
                     align: 'center',
-                    width: 120
+                    width: 100
+                },
+                {
+                    title: '索书号',
+                    field: 'call_num',
+                    align: 'center',
+                    width: 75
                 },
                 {
                     title: '价格',
@@ -144,13 +150,13 @@ if ($_SESSION['access'] != 1) {
                     title: '已借出',
                     align: 'center',
                     field: 'brrow_nums',
-                    width: 80
+                    width: 75
                 },
                 {
                     title: '借阅次数',
                     align: 'center',
                     field: 'lend_times',
-                    width: 90
+                    width: 85
                 },
                 {
                     title: '是否可借',
@@ -162,11 +168,12 @@ if ($_SESSION['access'] != 1) {
                 {
                     title: '操作',
                     align: 'center',
-                    toolbar: '#role-bar'
+                    toolbar: '#role-bar',
+                    width: 120
                 }
             ]
         ]
-        
+
         table.render({
             elem: '#book-table',
             url: '../../php/bookAPI.php?s=getBookinfo',

@@ -44,13 +44,13 @@ switch ($op) {
             }
         } else {
             if ($book_name && !$cate_id) {
-                $sql = "SELECT isbn,book_name,book_author,publisher,cate_id,price,quantity,brrow_nums,cate_name FROM book left join cate USING(cate_id) where book_name like '%{$book_name}%' AND book_status = 0 LIMIT {$page},{$limit}";
+                $sql = "SELECT isbn,call_num,book_name,book_author,publisher,cate_id,price,quantity,brrow_nums,cate_name FROM book left join cate USING(cate_id) where book_name like '%{$book_name}%' AND book_status = 0 LIMIT {$page},{$limit}";
             } else if (!$book_name && $cate_id) {
-                $sql = "SELECT isbn,book_name,book_author,publisher,cate_id,price,quantity,brrow_nums,cate_name FROM book left join cate USING(cate_id) where cate_id='{$cate_id}' AND book_status = 0 LIMIT {$page},{$limit}";
+                $sql = "SELECT isbn,call_num,book_name,book_author,publisher,cate_id,price,quantity,brrow_nums,cate_name FROM book left join cate USING(cate_id) where cate_id='{$cate_id}' AND book_status = 0 LIMIT {$page},{$limit}";
             } else if ($book_name && $cate_id) {
-                $sql = "SELECT isbn,book_name,book_author,publisher,cate_id,price,quantity,brrow_nums,cate_name FROM book left join cate USING(cate_id) where book_name like '%{$book_name}%' AND cate_id='{$cate_id}' AND book_status = 0 LIMIT {$page},{$limit}";
+                $sql = "SELECT isbn,call_num,book_name,book_author,publisher,cate_id,price,quantity,brrow_nums,cate_name FROM book left join cate USING(cate_id) where book_name like '%{$book_name}%' AND cate_id='{$cate_id}' AND book_status = 0 LIMIT {$page},{$limit}";
             } else {
-                $sql = "SELECT isbn,book_name,book_author,publisher,cate_id,price,quantity,brrow_nums,cate_name FROM book left join cate USING(cate_id) where book_status = 0 LIMIT {$page},{$limit}";
+                $sql = "SELECT isbn,call_num,book_name,book_author,publisher,cate_id,price,quantity,brrow_nums,cate_name FROM book left join cate USING(cate_id) where book_status = 0 LIMIT {$page},{$limit}";
             }
         }
         $res = $mySQLi->query($sql);
