@@ -82,11 +82,13 @@
                         } else if (d.lend_status == 2) {
                             return '<div><button type="button" class="return-btn layui-btn layui-btn-sm" lend_id="' +
                                 d.lend_id + '">归还</button></div>';
-                        } else if (d.lend_status == 1 ||d.lend_status==4) {
+                        } else if (d.lend_status == 1) {
                             return '<div><button type="button" class="cancel-btn layui-btn layui-btn-sm layui-btn-warm" lend_id="' +
-                                d.lend_id + '">取消</button></div>';
+                                d.lend_id + '">取消借阅</button></div>';
                         }else if(d.lend_status == 6){
                             return '<div><button type="button" class="layui-btn layui-btn-sm layui-btn-disabled" disabled="disabled">操作已取消</button></div>';
+                        }else if(d.lend_status==4){
+                            return '<div><button type="button" class="cancel-btn layui-btn layui-btn-sm layui-btn-warm" lend_id="' +d.lend_id + '">取消归还</button></div>';
                         }else{
                             return '<div><button type="button" class="layui-btn layui-btn-sm layui-btn-disabled" disabled="disabled">未批准</button></div>';
                         }
@@ -155,7 +157,7 @@
                         let lend_id = $(this).attr('lend_id');
                         layer.open({
                             title: '提示消息',
-                            content: '是否归还该书？',
+                            content: '是否取消归还该书？',
                             btn: ['确定', '取消'],
                             yes: function () {
                                 $.ajax({

@@ -2,7 +2,7 @@
 /*
  * @Author: your name
  * @Date: 2020-06-17 14:20:03
- * @LastEditTime: 2020-06-28 23:18:35
+ * @LastEditTime: 2020-06-28 23:40:26
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \Javascriptd:\wwwroot\books_management\php\lendAPI.php
@@ -187,6 +187,17 @@ switch ($op) {
             die(json_encode(array('code' => -1, 'msg' => '无权限')));
         }
         $lend_id = $_GET['lend_id'];
+
+        //判断当前状态
+        $sql = "SELECT lend_status FROM lend_info WHERE lend_id = '{$lend_id}'";
+        $res = ($mySQLi->query($sql))->fetch_assoc();
+        if ($res['lend_status'] != 1) {
+            $responseData['code'] = 1;
+            $responseData['msg'] = '失败，用户已取消申请！';
+            echo json_encode($responseData);
+            exit;
+        }
+
         $sql = "UPDATE lend_info SET lend_status = 2,admin_id = '{$_SESSION['uid']}' WHERE lend_id = '{$lend_id}'";
         if ($mySQLi->query($sql)) {
             $responseData['msg'] = '已批准';
@@ -202,6 +213,17 @@ switch ($op) {
             die(json_encode(array('code' => -1, 'msg' => '无权限')));
         }
         $lend_id = $_GET['lend_id'];
+
+        //判断当前状态
+        $sql = "SELECT lend_status FROM lend_info WHERE lend_id = '{$lend_id}'";
+        $res = ($mySQLi->query($sql))->fetch_assoc();
+        if ($res['lend_status'] != 1) {
+            $responseData['code'] = 1;
+            $responseData['msg'] = '失败，用户已取消申请！';
+            echo json_encode($responseData);
+            exit;
+        }
+
         $mySQLi->autocommit(false);
         $mySQLi->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
         $sql = "UPDATE lend_info SET lend_status = 3,admin_id = '{$_SESSION['uid']}' WHERE lend_id = '{$lend_id}'";
@@ -221,6 +243,7 @@ switch ($op) {
         if ($_SESSION['access'] == 2) {
             //判断是否是本人归还
             $lend_id = $_GET['lend_id'];
+            
             $sql = "SELECT * FROM lend_info WHERE lend_id = '{$lend_id}' AND user_id = '{$_SESSION['uid']}'";
             $res = $mySQLi->query($sql);
             if ($res->num_rows) {
@@ -242,6 +265,17 @@ switch ($op) {
             $lend_id = $_GET['lend_id'];
             $mySQLi->autocommit(false);
             $mySQLi->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
+
+            //判断当前状态
+            $sql = "SELECT lend_status FROM lend_info WHERE lend_id = '{$lend_id}'";
+            $res = ($mySQLi->query($sql))->fetch_assoc();
+            if ($res['lend_status'] != 4) {
+                $responseData['code'] = 1;
+                $responseData['msg'] = '失败，用户已取消申请！';
+                echo json_encode($responseData);
+                exit;
+            }
+
             $sql = "UPDATE lend_info SET lend_status = 5 WHERE lend_id = '{$lend_id}'";
             $sql1 = "UPDATE book SET brrow_nums = brrow_nums-1 WHERE isbn IN (SELECT isbn FROM lend_info WHERE lend_id = '{$lend_id}')";
             $sql2 = "UPDATE user SET borrow_times = borrow_times+1 WHERE user_id in(SELECT user_id FROM lend_info WHERE lend_id = '{$lend_id}')";
