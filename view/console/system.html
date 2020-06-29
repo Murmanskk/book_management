@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-06-29 11:52:04
- * @LastEditTime: 2020-06-29 13:27:19
+ * @LastEditTime: 2020-06-29 14:24:00
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \books_management\view\console\system.html
@@ -57,7 +57,7 @@
                 <div class="layui-card-body">
                     <div class="layui-row layui-col-space5">
                         <div class="layui-col-xs12 layui-col-md12 top-panel-tips">
-                            <i class="layui-icon layui-icon-star" style="color: #DD4A68;"></i>
+                            <i class="layui-icon layui-icon-speaker" style="color: #DD4A68;"></i>
                         </div>
                     </div>
                 </div>
@@ -120,6 +120,8 @@
                                                 icon: 1
                                             }, function () {
                                                 layer.closeAll();
+                                                $('.content').val('');
+                                                $('.title').val('');
                                             });
 
                                         } else {

@@ -95,6 +95,7 @@ $cate_nums = $res2[0]['num'];
 			padding-left: 15px;
 			border-radius: 4px;
 			margin-top: 5.2px;
+			cursor: pointer;
 		}
 
 		.custom-tab .layui-tab-title {
@@ -199,20 +200,14 @@ $cate_nums = $res2[0]['num'];
 				<div class="layui-card">
 					<div class="layui-card-header">系统公告</div>
 					<div class="layui-card-body">
-						<ul class="list">
+						<ul class="list notice-list">
 							<li class="list-item"><span class="title">优化代码格式</span><span class="footer">2020-06-04 11:28</span></li>
-							<li class="list-item"><span class="title">新增消息组件</span><span class="footer">2020-06-01 04:23</span></li>
-							<li class="list-item"><span class="title">移动端兼容</span><span class="footer">2020-05-22 21:38</span></li>
-							<li class="list-item"><span class="title">系统布局优化</span><span class="footer">2020-05-15 14:26</span></li>
-							<li class="list-item"><span class="title">兼容多系统菜单模式</span><span class="footer">2020-05-13 16:32</span></li>
-							<li class="list-item"><span class="title">兼容多标签页切换</span><span class="footer">2019-12-9 14:58</span></li>
-							<li class="list-item"><span class="title">扩展下拉组件</span><span class="footer">2019-12-7 9:06</span></li>
 							<li class="list-item" style="text-align: center;"><span><a>查看更多公告</a></span></li>
 						</ul>
 					</div>
 				</div>
 			</div>
-			<div class="layui-col-xs12 layui-col-md8">
+			<div class="layui-col-xs12 layui-col-md8 layui-col-space10">
 				<div class="layui-carousel" id="test1">
 					<div carousel-item>
 						<div><img src="https://www.hnie.edu.cn/uploads/1584584374823.jpg" alt="" style="width:100%;height:100%"></div>
@@ -220,78 +215,94 @@ $cate_nums = $res2[0]['num'];
 						<div><img src="https://www.hnie.edu.cn/uploads/1555663028959.jpg" alt="" style="width:100%;height:100%"></div>
 					</div>
 				</div>
-			</div>
-			<div class="layui-col-xs6 layui-col-md4">
-				<div class="layui-card top-panel">
-					<div class="layui-card-header">馆藏图书</div>
-					<div class="layui-card-body">
-						<div class="layui-row layui-col-space5">
-							<div class="layui-col-xs8 layui-col-md8 top-panel-number">
-								<?php echo $book_nums; ?>册
-							</div>
-							<div class="layui-col-xs4 layui-col-md4 top-panel-tips">
-								<i class="layui-icon layui-icon-star" style="color: #DD4A68;"></i>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="layui-col-xs6 layui-col-md4">
-				<div class="layui-card top-panel">
-					<div class="layui-card-header">共有分类</div>
-					<div class="layui-card-body">
-						<div class="layui-row layui-col-space5">
-							<div class="layui-col-xs8 layui-col-md8 top-panel-number">
-								<?php echo $cate_nums; ?>种
-							</div>
-							<div class="layui-col-xs4 layui-col-md4  top-panel-tips">
-								<i class="layui-icon layui-icon-template-1" style="color: #5FB878;"></i>
+				<div class="layui-col-xs6 layui-col-md6">
+					<div class="layui-card top-panel">
+						<div class="layui-card-header">馆藏图书</div>
+						<div class="layui-card-body">
+							<div class="layui-row layui-col-space5">
+								<div class="layui-col-xs8 layui-col-md8 top-panel-number">
+									<?php echo $book_nums; ?>册
+								</div>
+								<div class="layui-col-xs4 layui-col-md4 top-panel-tips">
+									<i class="layui-icon layui-icon-star" style="color: #DD4A68;"></i>
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-			<div class="layui-col-xs12 layui-col-md8">
-				<div class="layui-card">
-					<div class="layui-card-header">每日一句</div>
-					<div class="layui-card-body daywords">
+				<div class="layui-col-xs6 layui-col-md6">
+					<div class="layui-card top-panel">
+						<div class="layui-card-header">共有分类</div>
+						<div class="layui-card-body">
+							<div class="layui-row layui-col-space5">
+								<div class="layui-col-xs8 layui-col-md8 top-panel-number">
+									<?php echo $cate_nums; ?>种
+								</div>
+								<div class="layui-col-xs4 layui-col-md4  top-panel-tips">
+									<i class="layui-icon layui-icon-template-1" style="color: #5FB878;"></i>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="layui-col-xs12 layui-col-md12">
+					<div class="layui-card">
+						<div class="layui-card-header">每日一句</div>
+						<div class="layui-card-body daywords">
+						</div>
 					</div>
 				</div>
 			</div>
+
 
 		</div>
 		<!--</div>-->
 		<script src="../../component/layui/layui.js" charset="utf-8"></script>
 		<script type="text/javascript">
 			layui.use(['layer', 'element', 'carousel', 'jquery'], function() {
-				layer.ready(function(params) {
-					let $ = layui.jquery,
-						layer = layui.layer;
-					let pearTab = layui.pearTab;
-					let carousel = layui.carousel;
-					carousel.render({
-						elem: '#test1',
-						width: '100%',
-						arrow: 'hover', //始终显示箭头
-						//,anim: 'updown' //切换动画方式
-						height: '25rem'
-						//height: (W / b).toString() + "px"
-					});
-					$.ajax({
-						method: 'post',
-						url: 'https://v1.alapi.cn/api/mingyan?typeid=22',
-						success: function(data) {
-							$('.daywords').text(data.data.content + '---' + data.data.author);
-						}
-					})
-				})
+						layer.ready(function(params) {
+								let $ = layui.jquery,
+									layer = layui.layer;
+								let pearTab = layui.pearTab;
+								let carousel = layui.carousel;
+								carousel.render({
+									elem: '#test1',
+									width: '100%',
+									arrow: 'hover', //始终显示箭头
+									//,anim: 'updown' //切换动画方式
+									height: '25rem'
+									//height: (W / b).toString() + "px"
+								});
+								$.ajax({
+									method: 'post',
+									url: 'https://v1.alapi.cn/api/mingyan?typeid=22',
+									success: function(data) {
+										$('.daywords').text(data.data.content + '---' + data.data.author);
+									}
+								})
 
-			});
-			// window.onload = function() {
-			// 	var bannerH = $('.carousel-item img')[0].height;
-			// 	$('.layui-carousel').css('height', bannerH + 'px');
+								$.ajax({
+										method: 'post',
+										url: '../../php/system.php?s=getNoticeList',
+										success: function(res) {
+											res = JSON.parse(res);
+											data = res.data;
+											let str = '';
+											$('.notice-list').html('');
+											for (var k in data) {
+												$('.notice-list').append('<li class="list-item"><span class="title">' + data[k].title + '</span><span class="footer">' + data[k].release_time + '</span></li>');
+											}
+											$('.notice-list').append( '<li class = "list-item" style = "text-align: center;" > <span> <a> 查看更多公告 </a></span> </li>');
+											}
+										})
+								})
 
-			// }
+						});
+					// window.onload = function() {
+					// 	var bannerH = $('.carousel-item img')[0].height;
+					// 	$('.layui-carousel').css('height', bannerH + 'px');
+
+					// }
 		</script>
 </body>
 

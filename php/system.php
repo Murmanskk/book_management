@@ -2,7 +2,7 @@
 /*
  * @Author: your name
  * @Date: 2020-06-29 13:10:36
- * @LastEditTime: 2020-06-29 13:22:02
+ * @LastEditTime: 2020-06-29 14:03:04
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \books_management\php\system.php
@@ -31,7 +31,12 @@ switch ($op) {
             echo json_encode($responseData);
         }
         break;
-    
+    case 'getNoticeList':
+        $sql = "SELECT * FROM notice ORDER BY id DESC LIMIT 7";
+        $res = ($mySQLi->query($sql))->fetch_all(MYSQLI_ASSOC);
+        $responseData['data']=$res;
+        echo json_encode($responseData);
+    break;
     default:
         # code...
         break;
