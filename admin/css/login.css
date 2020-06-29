@@ -125,7 +125,7 @@ form h3{
     color: #555;
     font-family: 'Roboto', sans-serif;
 }
-a{
+.login-box a{
     display: block;
     text-align: right;
     text-decoration: none;
@@ -172,8 +172,15 @@ a:hover{
     text-align: center;
     font-size: 18px;
     font-family: 'Roboto', sans-serif;
+    text-align: center;
 }
 
+.copyright a{
+    text-decoration: none;
+    color: #38d39f;
+    font-size: 1.3rem;
+    transition: .3s;
+}
 /*媒体查询*/
 @media screen and (max-width: 1080px) {
     .container{
