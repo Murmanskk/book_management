@@ -253,56 +253,96 @@ $cate_nums = $res2[0]['num'];
 					</div>
 				</div>
 			</div>
+		</div>
+		<div id='notice-box' style='display:none'>
+			<div class="layui-card">
+				<div class="layui-card-header">
+					<div class='notice-box-title'>
 
+					</div>
+				</div>
+				<div class="layui-card-body">内容：
+					<div class='notice-box-content'>
+
+					</div>
+				</div>
+				<div class="layui-card-body">发布时间：
+					<div class='notice-box-time'>
+
+					</div>
+				</div>
+
+			</div>
 
 		</div>
 		<!--</div>-->
 		<script src="../../component/layui/layui.js" charset="utf-8"></script>
 		<script type="text/javascript">
 			layui.use(['layer', 'element', 'carousel', 'jquery'], function() {
-						layer.ready(function(params) {
-								let $ = layui.jquery,
-									layer = layui.layer;
-								let pearTab = layui.pearTab;
-								let carousel = layui.carousel;
-								carousel.render({
-									elem: '#test1',
-									width: '100%',
-									arrow: 'hover', //始终显示箭头
-									//,anim: 'updown' //切换动画方式
-									height: '25rem'
-									//height: (W / b).toString() + "px"
-								});
-								$.ajax({
-									method: 'post',
-									url: 'https://v1.alapi.cn/api/mingyan?typeid=22',
-									success: function(data) {
-										$('.daywords').text(data.data.content + '---' + data.data.author);
-									}
+				layer.ready(function(params) {
+					let $ = layui.jquery,
+						layer = layui.layer;
+					let pearTab = layui.pearTab;
+					let carousel = layui.carousel;
+					carousel.render({
+						elem: '#test1',
+						width: '100%',
+						arrow: 'hover', //始终显示箭头
+						//,anim: 'updown' //切换动画方式
+						height: '25rem'
+						//height: (W / b).toString() + "px"
+					});
+					$.ajax({
+						method: 'post',
+						url: 'https://v1.alapi.cn/api/mingyan?typeid=22',
+						success: function(data) {
+							$('.daywords').text(data.data.content + '---' + data.data.author);
+						}
+					})
+
+					$.ajax({
+						method: 'post',
+						url: '../../php/system.php?s=getNoticeList',
+						success: function(res) {
+							res = JSON.parse(res);
+							data = res.data;
+							let str = '';
+							$('.notice-list').html('');
+							for (var k in data) {
+								$('.notice-list').append('<li class="list-item" notice-id = "' + data[k].id + '" content = "' + data[k].content + '"><span class="title">' + data[k].title + '</span><span class="footer">' + data[k].release_time + '</span></li>');
+							}
+							$('.notice-list').append('<li class = "list-item" style = "text-align: center;" > <span> <a> 查看更多公告 </a></span> </li>');
+						},
+					}).done(function() {
+						$('.list-item').each(function() {
+							$(this).on('click', function() {
+								// console.log($(this).attr('notice-id'));
+								let content = $(this).attr('content');
+								let title = $(this).children('.title').text();
+								let time = $(this).children('.footer').text();
+								layer.open({
+									title: '公告',
+									type: 1,
+									area: ['300px', '350px'],
+									content: $('#notice-box'),
+									btn: ['确定'],
+									success: function() {
+										$('.notice-box-title').text(title);
+										$('.notice-box-content').text(content);
+										$('.notice-box-time').text(time);
+									},
+
 								})
+							})
+						})
+					})
+				})
+			});
+			// window.onload = function() {
+			// 	var bannerH = $('.carousel-item img')[0].height;
+			// 	$('.layui-carousel').css('height', bannerH + 'px');
 
-								$.ajax({
-										method: 'post',
-										url: '../../php/system.php?s=getNoticeList',
-										success: function(res) {
-											res = JSON.parse(res);
-											data = res.data;
-											let str = '';
-											$('.notice-list').html('');
-											for (var k in data) {
-												$('.notice-list').append('<li class="list-item"><span class="title">' + data[k].title + '</span><span class="footer">' + data[k].release_time + '</span></li>');
-											}
-											$('.notice-list').append( '<li class = "list-item" style = "text-align: center;" > <span> <a> 查看更多公告 </a></span> </li>');
-											}
-										})
-								})
-
-						});
-					// window.onload = function() {
-					// 	var bannerH = $('.carousel-item img')[0].height;
-					// 	$('.layui-carousel').css('height', bannerH + 'px');
-
-					// }
+			// }
 		</script>
 </body>
 
