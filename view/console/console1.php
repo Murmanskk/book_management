@@ -311,7 +311,6 @@ $cate_nums = $res2[0]['num'];
 							for (var k in data) {
 								$('.notice-list').append('<li class="list-item" notice-id = "' + data[k].id + '" content = "' + data[k].content + '"><span class="title">' + data[k].title + '</span><span class="footer">' + data[k].release_time + '</span></li>');
 							}
-							$('.notice-list').append('<li class = "list-item" style = "text-align: center;" > <span> <a> 查看更多公告 </a></span> </li>');
 						},
 					}).done(function() {
 						$('.list-item').each(function() {
@@ -335,6 +334,7 @@ $cate_nums = $res2[0]['num'];
 								})
 							})
 						})
+						$('.notice-list').append('<li class = "list-item" style = "text-align: center;" > <span> <a> 查看更多公告 </a></span> </li>');
 					})
 				})
 			});

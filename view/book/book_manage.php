@@ -221,30 +221,31 @@ if ($_SESSION['access'] != 1) {
 
         //添加图书
         window.add = function() {
-            var index = layer.open({
+            let index = layer.open({
                 type: 2,
                 title: '新增',
                 shade: 0.1,
-                area: ['300px', '450px'],
+                area: ['300px', '500px'],
                 content: 'add.html'
             });
         }
         //修改图书
         function edit(edit) {
-            var index = layui.layer.open({
+            let index = layui.layer.open({
                 type: 2,
                 title: '修改',
                 shade: 0.1,
-                area: ['300px', '450px'],
+                area: ['300px', '500px'],
                 content: 'edit.html',
                 success: function(layero, index) {
-                    var body = layer.getChildFrame('body', index);
-                    var iframeWin = window[layero.find('iframe')[0]['name']];
+                    let body = layer.getChildFrame('body', index);
+                    let iframeWin = window[layero.find('iframe')[0]['name']];
                     if (edit) {
                         data = edit.data;
                         body.find(".isbn").val(data.isbn);
                         body.find(".book_name").val(data.book_name);
                         body.find(".book_author").val(data.book_author);
+                        body.find(".call_num").val(data.call_num);
                         body.find(".publisher").val(data.publisher);
                         body.find(".price").val(data.price);
                         body.find(".quantity").val(data.quantity);
