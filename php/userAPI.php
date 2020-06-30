@@ -2,7 +2,7 @@
 /*
  * @Author: your name
  * @Date: 2020-06-21 19:32:54
- * @LastEditTime: 2020-06-27 20:59:06
+ * @LastEditTime: 2020-06-30 14:32:14
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \books_management\php\userAPI.php
@@ -37,9 +37,9 @@ switch ($op) {
             $page = 0;
         }
         if($tel){
-            $sql = "SELECT user_id,user_name,sex,tel,email,user_status,borrow_times,access_id,overdue_times FROM user WHERE tel like '%{$tel}%' AND access_id = 2 LIMIT {$page}, {$limit}";
+            $sql = "SELECT user_id,user_name,tel,email,user_status,borrow_times,access_id,overdue_times FROM user WHERE tel like '%{$tel}%' AND access_id = 2 LIMIT {$page}, {$limit}";
         }else{
-            $sql = "SELECT user_id,user_name,sex,tel,email,user_status,borrow_times,access_id,overdue_times FROM user WHERE access_id = 2 LIMIT {$page}, {$limit}";
+            $sql = "SELECT user_id,user_name,tel,email,user_status,borrow_times,access_id,overdue_times FROM user WHERE access_id = 2 LIMIT {$page}, {$limit}";
         }
         if($res = $mySQLi->query($sql)){
             $res_arr = $res->fetch_all(MYSQLI_ASSOC);
@@ -48,6 +48,7 @@ switch ($op) {
         }else{
             $responseData['code']=-1;
             $responseData['msg'] = '请求失败';
+            echo $mySQLi->error;
             echo json_encode($responseData);
         }
         
