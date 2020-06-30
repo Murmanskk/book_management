@@ -2,7 +2,7 @@
 /*
  * @Author: your name
  * @Date: 2020-06-21 17:35:15
- * @LastEditTime: 2020-06-26 23:39:36
+ * @LastEditTime: 2020-06-30 13:30:06
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \books_management\view\book\cate_manage.php
@@ -93,7 +93,7 @@ if ($_SESSION['access'] != 1) {
         table.on('tool(cateList)', function(obj) {
             if (obj.event === 'edit') {
                 layer.prompt({
-                    title: '将分类名“'+obj.data.cate_name+'”修改为：'
+                    title: '将分类名“' + obj.data.cate_name + '”修改为：'
                 }, function(val, index) {
                     layer.confirm('确定修改？', function() {
                         //do something
@@ -115,7 +115,31 @@ if ($_SESSION['access'] != 1) {
                 });
 
             } else if (obj.event === 'remove') {
-                //
+                layer.confirm('确定要删除该分类', {
+                    icon: 3,
+                    title: '提示'
+                }, function(index) {
+                    $.ajax({
+                        url: '../../php/cateAPI.php?s=delCate&cate_id=' + obj.data.cate_id,
+                        type: 'delete',
+                        dataType: 'json',
+                        success: function(result) {
+                            if (result.code == 0) {
+                                layer.msg(result.msg, {
+                                    icon: 1,
+                                    time: 1000
+                                });
+                                refresh();
+                            } else {
+                                layer.msg(result.msg, {
+                                    icon: 2,
+                                    time: 1000
+                                });
+                                refresh();
+                            }
+                        }
+                    })
+                });
             }
         });
         $(".addCate_btn").click(function() {

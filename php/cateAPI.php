@@ -2,7 +2,7 @@
 /*
  * @Author: your name
  * @Date: 2020-06-26 19:36:43
- * @LastEditTime: 2020-06-26 23:45:22
+ * @LastEditTime: 2020-06-30 13:29:30
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \books_management\php\cateAPI.php
@@ -57,6 +57,21 @@ switch ($op) {
                 //echo $mySQLi->error;
                 echo json_encode($responseData);
             }
+        break;
+    case 'delCate':
+        $cate_id = $_GET['cate_id'];
+        $sql = "SELECT * FROM book WHERE cate_id = '{$cate_id}'";
+        $res = $mySQLi->query($sql);
+        $count = $res->num_rows;
+        if($count){
+            $responseData['code'] = -1;
+            $responseData['msg'] = '删除失败，当前分类下有书籍！';
+            echo json_encode($responseData);
+        }else{
+            //删除语句
+            $responseData['msg'] = '删除成功';
+            echo json_encode($responseData);
+        }
         break;
     default:
         # code...
